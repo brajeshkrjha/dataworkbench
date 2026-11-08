@@ -1,0 +1,3938 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "DataWorkbench",
+    "description": "Everyday Tools for Data Engineers",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Health check",
+        "description": "Return application health status.",
+        "operationId": "get_health_api_v1_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/version": {
+      "get": {
+        "tags": [
+          "version"
+        ],
+        "summary": "Application version",
+        "description": "Return application name, tagline, and version.",
+        "operationId": "get_version_api_v1_version_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools": {
+      "get": {
+        "tags": [
+          "tools"
+        ],
+        "summary": "List all tools",
+        "description": "Return metadata for every tool registered in the Tool Registry.",
+        "operationId": "list_tools_api_v1_tools_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/{tool_id}": {
+      "get": {
+        "tags": [
+          "tools"
+        ],
+        "summary": "Get tool by id",
+        "description": "Return metadata for a single tool by its id.",
+        "operationId": "get_tool_api_v1_tools__tool_id__get",
+        "parameters": [
+          {
+            "name": "tool_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Tool Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolMetadata"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/parquet-utility/convert": {
+      "post": {
+        "tags": [
+          "parquet-utility"
+        ],
+        "summary": "Convert a supported file to parquet",
+        "description": "Convert an uploaded file into a downloadable parquet file.",
+        "operationId": "convert_to_parquet_api_v1_tools_parquet_utility_convert_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_convert_to_parquet_api_v1_tools_parquet_utility_convert_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The generated parquet file. Conversion metadata (ConversionResult fields) is returned in X-Conversion-* headers.",
+            "content": {
+              "application/vnd.apache.parquet": {}
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/parquet-utility/convert/inspect": {
+      "post": {
+        "tags": [
+          "parquet-utility"
+        ],
+        "summary": "Inspect a file's schema before conversion",
+        "description": "Sample an uploaded file and report auto-detected per-column datatypes.\n\nLets the Convert Files UI show detected types, sample values, and null\nrates before conversion, so users can review and override datatypes.",
+        "operationId": "inspect_schema_api_v1_tools_parquet_utility_convert_inspect_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_inspect_schema_api_v1_tools_parquet_utility_convert_inspect_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SchemaInspectionResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/parquet-utility/convert/from-parquet/upload": {
+      "post": {
+        "tags": [
+          "parquet-utility"
+        ],
+        "summary": "Upload a parquet file to convert to CSV",
+        "operationId": "upload_for_csv_export_api_v1_tools_parquet_utility_convert_from_parquet_upload_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_for_csv_export_api_v1_tools_parquet_utility_convert_from_parquet_upload_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParquetUploadResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/parquet-utility/convert/from-parquet/{file_id}/export": {
+      "post": {
+        "tags": [
+          "parquet-utility"
+        ],
+        "summary": "Export an uploaded parquet file as CSV",
+        "operationId": "export_parquet_to_csv_api_v1_tools_parquet_utility_convert_from_parquet__file_id__export_post",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "File Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_export_parquet_to_csv_api_v1_tools_parquet_utility_convert_from_parquet__file_id__export_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The generated CSV file. Export metadata is returned in X-Conversion-* headers.",
+            "content": {
+              "text/csv": {}
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/parquet-utility/reader/upload": {
+      "post": {
+        "tags": [
+          "parquet-utility"
+        ],
+        "summary": "Upload a parquet file for reading",
+        "description": "Upload a parquet file once; returns a session id for follow-up requests.\n\nThe file is kept on disk (not re-sent by the client) so metadata,\nschema, and row-page requests can all reuse the same session.",
+        "operationId": "upload_for_reading_api_v1_tools_parquet_utility_reader_upload_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_for_reading_api_v1_tools_parquet_utility_reader_upload_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParquetUploadResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/parquet-utility/reader/{file_id}/metadata": {
+      "get": {
+        "tags": [
+          "parquet-utility"
+        ],
+        "summary": "Get summary metadata for an uploaded parquet file",
+        "operationId": "get_reader_metadata_api_v1_tools_parquet_utility_reader__file_id__metadata_get",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "File Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParquetFileMetadata"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/parquet-utility/reader/{file_id}/schema": {
+      "get": {
+        "tags": [
+          "parquet-utility"
+        ],
+        "summary": "Get column schema for an uploaded parquet file",
+        "operationId": "get_reader_schema_api_v1_tools_parquet_utility_reader__file_id__schema_get",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "File Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ColumnSchema"
+                  },
+                  "title": "Response Get Reader Schema Api V1 Tools Parquet Utility Reader  File Id  Schema Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/parquet-utility/reader/{file_id}/rows": {
+      "get": {
+        "tags": [
+          "parquet-utility"
+        ],
+        "summary": "Get a page of row data for an uploaded parquet file",
+        "operationId": "get_reader_rows_api_v1_tools_parquet_utility_reader__file_id__rows_get",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "File Id"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Row offset to start reading from.",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Row offset to start reading from."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000,
+              "minimum": 1,
+              "description": "Maximum rows to return.",
+              "default": 100,
+              "title": "Limit"
+            },
+            "description": "Maximum rows to return."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParquetRowPage"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/parquet-utility/analyzer/upload": {
+      "post": {
+        "tags": [
+          "parquet-utility"
+        ],
+        "summary": "Upload a parquet file for analysis",
+        "operationId": "upload_for_analysis_api_v1_tools_parquet_utility_analyzer_upload_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_for_analysis_api_v1_tools_parquet_utility_analyzer_upload_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParquetUploadResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/parquet-utility/analyzer/{file_id}/overview": {
+      "get": {
+        "tags": [
+          "parquet-utility"
+        ],
+        "summary": "Get overview metadata for an analyzed parquet file",
+        "operationId": "get_analyzer_overview_api_v1_tools_parquet_utility_analyzer__file_id__overview_get",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "File Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParquetFileMetadata"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/parquet-utility/analyzer/{file_id}/schema": {
+      "get": {
+        "tags": [
+          "parquet-utility"
+        ],
+        "summary": "Get column schema for an analyzed parquet file",
+        "operationId": "get_analyzer_schema_api_v1_tools_parquet_utility_analyzer__file_id__schema_get",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "File Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ColumnSchema"
+                  },
+                  "title": "Response Get Analyzer Schema Api V1 Tools Parquet Utility Analyzer  File Id  Schema Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/parquet-utility/analyzer/{file_id}/statistics": {
+      "get": {
+        "tags": [
+          "parquet-utility"
+        ],
+        "summary": "Get per-column statistics for an analyzed parquet file",
+        "operationId": "get_analyzer_statistics_api_v1_tools_parquet_utility_analyzer__file_id__statistics_get",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "File Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParquetStatistics"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/parquet-utility/analyzer/{file_id}/columns/{column_name}/profile": {
+      "get": {
+        "tags": [
+          "parquet-utility"
+        ],
+        "summary": "Get a detailed profile for one column of an analyzed parquet file",
+        "operationId": "get_analyzer_column_profile_api_v1_tools_parquet_utility_analyzer__file_id__columns__column_name__profile_get",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "File Id"
+            }
+          },
+          {
+            "name": "column_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Column Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ColumnProfile"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/parquet-utility/analyzer/{file_id}/sample": {
+      "get": {
+        "tags": [
+          "parquet-utility"
+        ],
+        "summary": "Get a row sample (first N or random) from an analyzed parquet file",
+        "operationId": "get_analyzer_sample_api_v1_tools_parquet_utility_analyzer__file_id__sample_get",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "File Id"
+            }
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/SampleMode",
+              "description": "'first' or 'random'.",
+              "default": "first"
+            },
+            "description": "'first' or 'random'."
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 5000,
+              "minimum": 1,
+              "description": "Number of rows to sample.",
+              "default": 100,
+              "title": "Size"
+            },
+            "description": "Number of rows to sample."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParquetSample"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/parquet-utility/analyzer/{file_id}/storage": {
+      "get": {
+        "tags": [
+          "parquet-utility"
+        ],
+        "summary": "Get storage/compression analysis for an analyzed parquet file",
+        "operationId": "get_analyzer_storage_api_v1_tools_parquet_utility_analyzer__file_id__storage_get",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "File Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StorageAnalysis"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/parquet-utility/comparison/compare": {
+      "post": {
+        "tags": [
+          "parquet-utility"
+        ],
+        "summary": "Compare the schemas of two parquet files",
+        "operationId": "compare_schemas_api_v1_tools_parquet_utility_comparison_compare_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_compare_schemas_api_v1_tools_parquet_utility_comparison_compare_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SchemaComparisonResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/parquet-utility/comparison/export": {
+      "post": {
+        "tags": [
+          "parquet-utility"
+        ],
+        "summary": "Export a schema comparison result as a Markdown or CSV report",
+        "operationId": "export_comparison_api_v1_tools_parquet_utility_comparison_export_post",
+        "parameters": [
+          {
+            "name": "format",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ComparisonExportFormat"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaComparisonResult"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/gcp-looker-utility/convert": {
+      "post": {
+        "tags": [
+          "gcp-looker-utility"
+        ],
+        "summary": "Convert a PBIP project ZIP into a LookML package",
+        "description": "Convert an uploaded PBIP project ZIP into a downloadable LookML package ZIP.",
+        "operationId": "convert_pbip_project_api_v1_tools_gcp_looker_utility_convert_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_convert_pbip_project_api_v1_tools_gcp_looker_utility_convert_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The generated LookML package as a ZIP. Conversion metadata (LookerConversionResult fields) is returned in X-Looker-* headers.",
+            "content": {
+              "application/zip": {}
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/gcp-looker-utility/explore": {
+      "post": {
+        "tags": [
+          "gcp-looker-utility"
+        ],
+        "summary": "Explore a PBIP project's structure without opening Power BI Desktop",
+        "description": "Return tables, measures, relationships, roles, lineage and statistics for a PBIP project.",
+        "operationId": "explore_pbip_structure_api_v1_tools_gcp_looker_utility_explore_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_explore_pbip_structure_api_v1_tools_gcp_looker_utility_explore_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PbipStructureResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/gcp-looker-utility/preview": {
+      "post": {
+        "tags": [
+          "gcp-looker-utility"
+        ],
+        "summary": "Generate LookML and return it as structured data for in-browser preview",
+        "description": "Convert a PBIP project the same way /convert does, but return structured LookML instead of a ZIP.",
+        "operationId": "preview_lookml_package_api_v1_tools_gcp_looker_utility_preview_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_preview_lookml_package_api_v1_tools_gcp_looker_utility_preview_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LookmlPreviewResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/gcp-looker-utility/compare": {
+      "post": {
+        "tags": [
+          "gcp-looker-utility"
+        ],
+        "summary": "Compare two PBIP projects and/or generated LookML packages",
+        "description": "Auto-detect each upload's source type (PBIP project or LookML package), adapt both\nto the same LookML structure, and return a structural diff (views, explores, fields, joins).\nSupports all four combinations: PBIP vs PBIP, LookML vs LookML, and either mixed direction.",
+        "operationId": "compare_lookml_packages_api_v1_tools_gcp_looker_utility_compare_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_compare_lookml_packages_api_v1_tools_gcp_looker_utility_compare_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LookmlCompareResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/gcp-looker-utility/bulk-convert": {
+      "post": {
+        "tags": [
+          "gcp-looker-utility"
+        ],
+        "summary": "Start a bulk PBIP -> LookML conversion job for a parent folder of many projects",
+        "description": "Discovers every PBIP project in the upload, starts converting the valid ones in the\nbackground, and returns immediately with a job id plus the discovery summary so the UI\ncan show 'Found / Valid / Invalid' right away and start polling for progress.",
+        "operationId": "start_bulk_convert_api_v1_tools_gcp_looker_utility_bulk_convert_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_start_bulk_convert_api_v1_tools_gcp_looker_utility_bulk_convert_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkJobStartResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/gcp-looker-utility/bulk-convert/{job_id}/status": {
+      "get": {
+        "tags": [
+          "gcp-looker-utility"
+        ],
+        "summary": "Poll progress for a running bulk conversion job",
+        "operationId": "get_bulk_convert_status_api_v1_tools_gcp_looker_utility_bulk_convert__job_id__status_get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkJobStatusResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/gcp-looker-utility/bulk-convert/{job_id}/summary": {
+      "get": {
+        "tags": [
+          "gcp-looker-utility"
+        ],
+        "summary": "Get the result summary for a bulk conversion job",
+        "operationId": "get_bulk_convert_summary_api_v1_tools_gcp_looker_utility_bulk_convert__job_id__summary_get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkJobSummaryResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/gcp-looker-utility/bulk-convert/{job_id}/download": {
+      "get": {
+        "tags": [
+          "gcp-looker-utility"
+        ],
+        "summary": "Download the completed bulk conversion output ZIP",
+        "operationId": "download_bulk_convert_api_v1_tools_gcp_looker_utility_bulk_convert__job_id__download_get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/zip": {}
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/gcp-looker-utility/bulk-convert/{job_id}/report": {
+      "get": {
+        "tags": [
+          "gcp-looker-utility"
+        ],
+        "summary": "Download a Markdown summary report for a bulk conversion job",
+        "operationId": "download_bulk_convert_report_api_v1_tools_gcp_looker_utility_bulk_convert__job_id__report_get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/markdown": {}
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/text-compare-utility/compare": {
+      "post": {
+        "tags": [
+          "text-compare-utility"
+        ],
+        "summary": "Compare two sources (upload, paste, or mixed) with auto type detection",
+        "operationId": "compare_api_v1_tools_text_compare_utility_compare_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_compare_api_v1_tools_text_compare_utility_compare_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComparisonResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/text-compare-utility/compare/export": {
+      "post": {
+        "tags": [
+          "text-compare-utility"
+        ],
+        "summary": "Export a comparison result as a Markdown or CSV report",
+        "operationId": "export_comparison_api_v1_tools_text_compare_utility_compare_export_post",
+        "parameters": [
+          {
+            "name": "format",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ComparisonExportFormat"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ComparisonResult"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "root"
+        ],
+        "summary": "Root",
+        "description": "Basic root endpoint pointing to API docs.",
+        "operationId": "read_root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Read Root  Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Body_compare_api_v1_tools_text_compare_utility_compare_post": {
+        "properties": {
+          "file_a": {
+            "anyOf": [
+              {
+                "type": "string",
+                "contentMediaType": "application/octet-stream"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File A",
+            "description": "Upload for Version A."
+          },
+          "file_b": {
+            "anyOf": [
+              {
+                "type": "string",
+                "contentMediaType": "application/octet-stream"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File B",
+            "description": "Upload for Version B."
+          },
+          "text_a": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text A",
+            "description": "Pasted content for Version A."
+          },
+          "text_b": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text B",
+            "description": "Pasted content for Version B."
+          },
+          "type_override": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ComparisonInputType"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Force a specific comparison type."
+          }
+        },
+        "type": "object",
+        "title": "Body_compare_api_v1_tools_text_compare_utility_compare_post"
+      },
+      "Body_compare_lookml_packages_api_v1_tools_gcp_looker_utility_compare_post": {
+        "properties": {
+          "file_a": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File A",
+            "description": "A ZIP of a PBIP project or a generated LookML package (the 'previous' side)."
+          },
+          "file_b": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File B",
+            "description": "A ZIP of a PBIP project or a generated LookML package (the 'current' side)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "file_a",
+          "file_b"
+        ],
+        "title": "Body_compare_lookml_packages_api_v1_tools_gcp_looker_utility_compare_post"
+      },
+      "Body_compare_schemas_api_v1_tools_parquet_utility_comparison_compare_post": {
+        "properties": {
+          "file_a": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File A",
+            "description": "The baseline/original .parquet file."
+          },
+          "file_b": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File B",
+            "description": "The new/changed .parquet file to compare against File A."
+          },
+          "include_order_changes": {
+            "type": "boolean",
+            "title": "Include Order Changes",
+            "description": "Also flag column position/order changes as differences.",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "file_a",
+          "file_b"
+        ],
+        "title": "Body_compare_schemas_api_v1_tools_parquet_utility_comparison_compare_post"
+      },
+      "Body_convert_pbip_project_api_v1_tools_gcp_looker_utility_convert_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "description": "A ZIP archive of a PBIP project, containing the .pbip file, its <Name>.Report folder, and its <Name>.SemanticModel folder."
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_convert_pbip_project_api_v1_tools_gcp_looker_utility_convert_post"
+      },
+      "Body_convert_to_parquet_api_v1_tools_parquet_utility_convert_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "description": "File to convert (CSV, TSV, JSON, Excel, XML, Avro, or ORC)."
+          },
+          "compression": {
+            "$ref": "#/components/schemas/CompressionCodec",
+            "description": "Parquet compression codec.",
+            "default": "snappy"
+          },
+          "output_file_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output File Name",
+            "description": "Optional custom output file name (without extension)."
+          },
+          "column_types": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Column Types",
+            "description": "Optional JSON-encoded list of column datatype overrides: [{\"column\": \"Amount\", \"data_type\": \"decimal\"}, ...]. Omit to keep automatic type inference (currently CSV/TSV only)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_convert_to_parquet_api_v1_tools_parquet_utility_convert_post"
+      },
+      "Body_explore_pbip_structure_api_v1_tools_gcp_looker_utility_explore_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "description": "A ZIP archive of a PBIP project."
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_explore_pbip_structure_api_v1_tools_gcp_looker_utility_explore_post"
+      },
+      "Body_export_parquet_to_csv_api_v1_tools_parquet_utility_convert_from_parquet__file_id__export_post": {
+        "properties": {
+          "delimiter": {
+            "$ref": "#/components/schemas/CsvDelimiter",
+            "description": "CSV field delimiter.",
+            "default": "comma"
+          },
+          "include_header": {
+            "type": "boolean",
+            "title": "Include Header",
+            "description": "Whether to include a header row.",
+            "default": true
+          },
+          "quoting": {
+            "$ref": "#/components/schemas/CsvQuoting",
+            "description": "CSV quoting style.",
+            "default": "standard"
+          },
+          "output_file_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output File Name",
+            "description": "Optional custom output file name (without extension)."
+          }
+        },
+        "type": "object",
+        "title": "Body_export_parquet_to_csv_api_v1_tools_parquet_utility_convert_from_parquet__file_id__export_post"
+      },
+      "Body_inspect_schema_api_v1_tools_parquet_utility_convert_inspect_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "description": "CSV or TSV file to inspect (sampled, not fully read)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_inspect_schema_api_v1_tools_parquet_utility_convert_inspect_post"
+      },
+      "Body_preview_lookml_package_api_v1_tools_gcp_looker_utility_preview_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "description": "A ZIP archive of a PBIP project."
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_preview_lookml_package_api_v1_tools_gcp_looker_utility_preview_post"
+      },
+      "Body_start_bulk_convert_api_v1_tools_gcp_looker_utility_bulk_convert_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "description": "A ZIP of a parent folder containing one or more PBIP project subfolders."
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_start_bulk_convert_api_v1_tools_gcp_looker_utility_bulk_convert_post"
+      },
+      "Body_upload_for_analysis_api_v1_tools_parquet_utility_analyzer_upload_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "description": "A .parquet file to analyze."
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_for_analysis_api_v1_tools_parquet_utility_analyzer_upload_post"
+      },
+      "Body_upload_for_csv_export_api_v1_tools_parquet_utility_convert_from_parquet_upload_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "description": "A .parquet file to convert to CSV."
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_for_csv_export_api_v1_tools_parquet_utility_convert_from_parquet_upload_post"
+      },
+      "Body_upload_for_reading_api_v1_tools_parquet_utility_reader_upload_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "description": "A .parquet file to inspect."
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_for_reading_api_v1_tools_parquet_utility_reader_upload_post"
+      },
+      "BulkDiscoverySummary": {
+        "properties": {
+          "found": {
+            "type": "integer",
+            "title": "Found",
+            "description": "Total .pbip files discovered anywhere in the upload."
+          },
+          "valid": {
+            "type": "integer",
+            "title": "Valid",
+            "description": "Projects with a resolvable .Report and .SemanticModel folder."
+          },
+          "invalid": {
+            "type": "integer",
+            "title": "Invalid",
+            "description": "Projects missing required folders, skipped before conversion."
+          },
+          "invalid_projects": {
+            "items": {
+              "$ref": "#/components/schemas/BulkInvalidProject"
+            },
+            "type": "array",
+            "title": "Invalid Projects"
+          }
+        },
+        "type": "object",
+        "required": [
+          "found",
+          "valid",
+          "invalid",
+          "invalid_projects"
+        ],
+        "title": "BulkDiscoverySummary",
+        "description": "Counts and details from scanning a bulk upload for PBIP projects."
+      },
+      "BulkInvalidProject": {
+        "properties": {
+          "project_name": {
+            "type": "string",
+            "title": "Project Name"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "project_name",
+          "reason"
+        ],
+        "title": "BulkInvalidProject",
+        "description": "A project discovered in a bulk upload that could not be converted."
+      },
+      "BulkJobStartResult": {
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "title": "Job Id"
+          },
+          "discovery": {
+            "$ref": "#/components/schemas/BulkDiscoverySummary"
+          }
+        },
+        "type": "object",
+        "required": [
+          "job_id",
+          "discovery"
+        ],
+        "title": "BulkJobStartResult",
+        "description": "Returned immediately after starting a bulk conversion job."
+      },
+      "BulkJobStatusResult": {
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "title": "Job Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "'processing', 'completed', or 'failed'."
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total",
+            "description": "Number of valid projects queued for conversion."
+          },
+          "processed": {
+            "type": "integer",
+            "title": "Processed",
+            "description": "Number of those projects attempted so far."
+          },
+          "current_project": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Project",
+            "description": "Project currently being converted, if any."
+          },
+          "percent": {
+            "type": "number",
+            "title": "Percent",
+            "description": "Overall progress, 0-100."
+          }
+        },
+        "type": "object",
+        "required": [
+          "job_id",
+          "status",
+          "total",
+          "processed",
+          "percent"
+        ],
+        "title": "BulkJobStatusResult",
+        "description": "Polled while a bulk conversion job is running."
+      },
+      "BulkJobSummaryResult": {
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "title": "Job Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "discovery": {
+            "$ref": "#/components/schemas/BulkDiscoverySummary"
+          },
+          "processed": {
+            "type": "integer",
+            "title": "Processed"
+          },
+          "successful": {
+            "type": "integer",
+            "title": "Successful"
+          },
+          "failed": {
+            "type": "integer",
+            "title": "Failed"
+          },
+          "successes": {
+            "items": {
+              "$ref": "#/components/schemas/BulkProjectSuccess"
+            },
+            "type": "array",
+            "title": "Successes"
+          },
+          "failures": {
+            "items": {
+              "$ref": "#/components/schemas/BulkProjectFailure"
+            },
+            "type": "array",
+            "title": "Failures"
+          }
+        },
+        "type": "object",
+        "required": [
+          "job_id",
+          "status",
+          "discovery",
+          "processed",
+          "successful",
+          "failed",
+          "successes",
+          "failures"
+        ],
+        "title": "BulkJobSummaryResult",
+        "description": "Final (or in-progress) result summary for a bulk conversion job."
+      },
+      "BulkProjectFailure": {
+        "properties": {
+          "project_name": {
+            "type": "string",
+            "title": "Project Name"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "project_name",
+          "reason"
+        ],
+        "title": "BulkProjectFailure"
+      },
+      "BulkProjectSuccess": {
+        "properties": {
+          "project_name": {
+            "type": "string",
+            "title": "Project Name"
+          },
+          "views_generated": {
+            "type": "integer",
+            "title": "Views Generated"
+          },
+          "explores_generated": {
+            "type": "integer",
+            "title": "Explores Generated"
+          }
+        },
+        "type": "object",
+        "required": [
+          "project_name",
+          "views_generated",
+          "explores_generated"
+        ],
+        "title": "BulkProjectSuccess"
+      },
+      "ColumnDiff": {
+        "properties": {
+          "column_name": {
+            "type": "string",
+            "title": "Column Name",
+            "description": "Display name - name_b for renames, else the shared name."
+          },
+          "name_a": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name A"
+          },
+          "name_b": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name B"
+          },
+          "diff_type": {
+            "$ref": "#/components/schemas/SchemaDiffType"
+          },
+          "risk_level": {
+            "$ref": "#/components/schemas/RiskLevel"
+          },
+          "data_type_a": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Type A"
+          },
+          "data_type_b": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Type B"
+          },
+          "nullable_a": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nullable A"
+          },
+          "nullable_b": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nullable B"
+          },
+          "metadata_a": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metadata A"
+          },
+          "metadata_b": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metadata B"
+          },
+          "encoding_a": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Encoding A"
+          },
+          "encoding_b": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Encoding B"
+          },
+          "position_a": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position A"
+          },
+          "position_b": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position B"
+          },
+          "rename_confidence": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rename Confidence",
+            "description": "0-1 similarity score for best-effort rename matches."
+          },
+          "details": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Details",
+            "description": "Human-readable change descriptions."
+          }
+        },
+        "type": "object",
+        "required": [
+          "column_name",
+          "diff_type",
+          "risk_level"
+        ],
+        "title": "ColumnDiff",
+        "description": "A single column's comparison result between File A and File B."
+      },
+      "ColumnProfile": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "data_type": {
+            "type": "string",
+            "title": "Data Type"
+          },
+          "null_count": {
+            "type": "integer",
+            "title": "Null Count"
+          },
+          "null_percentage": {
+            "type": "number",
+            "title": "Null Percentage"
+          },
+          "distinct_count": {
+            "type": "integer",
+            "title": "Distinct Count"
+          },
+          "cardinality_ratio": {
+            "type": "number",
+            "title": "Cardinality Ratio",
+            "description": "distinct_count / non-null row count, 0-1."
+          },
+          "most_common_values": {
+            "items": {
+              "$ref": "#/components/schemas/CommonValue"
+            },
+            "type": "array",
+            "title": "Most Common Values"
+          },
+          "min_value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Value"
+          },
+          "max_value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Value"
+          },
+          "avg_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "data_type",
+          "null_count",
+          "null_percentage",
+          "distinct_count",
+          "cardinality_ratio",
+          "most_common_values"
+        ],
+        "title": "ColumnProfile",
+        "description": "Detailed profile for a single selected column (Column Profiling tab)."
+      },
+      "ColumnSchema": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Column name."
+          },
+          "data_type": {
+            "type": "string",
+            "title": "Data Type",
+            "description": "Arrow/parquet data type, e.g. 'int64', 'string'."
+          },
+          "nullable": {
+            "type": "boolean",
+            "title": "Nullable",
+            "description": "Whether the column allows null values."
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "data_type",
+          "nullable"
+        ],
+        "title": "ColumnSchema",
+        "description": "A single column's schema, as declared in the parquet file footer."
+      },
+      "ColumnStatistics": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "data_type": {
+            "type": "string",
+            "title": "Data Type"
+          },
+          "null_count": {
+            "type": "integer",
+            "title": "Null Count"
+          },
+          "null_percentage": {
+            "type": "number",
+            "title": "Null Percentage"
+          },
+          "distinct_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Distinct Count"
+          },
+          "min_value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Value"
+          },
+          "max_value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Value"
+          },
+          "avg_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "data_type",
+          "null_count",
+          "null_percentage"
+        ],
+        "title": "ColumnStatistics",
+        "description": "Per-column statistics for the Statistics tab.\n\n`null_count`/`min_value`/`max_value` come straight from the parquet\nfooter (no data read). `distinct_count`/`avg_value` require reading the\ncolumn's data and are omitted (`None`) once the file is too large to\nscan cheaply - see `_MAX_ROWS_FOR_FULL_STATS` in reader_service.py."
+      },
+      "ColumnStorage": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "compressed_size_bytes": {
+            "type": "integer",
+            "title": "Compressed Size Bytes"
+          },
+          "uncompressed_size_bytes": {
+            "type": "integer",
+            "title": "Uncompressed Size Bytes"
+          },
+          "compression_ratio": {
+            "type": "number",
+            "title": "Compression Ratio",
+            "description": "uncompressed / compressed, 1.0 = no savings."
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "compressed_size_bytes",
+          "uncompressed_size_bytes",
+          "compression_ratio"
+        ],
+        "title": "ColumnStorage"
+      },
+      "CommonValue": {
+        "properties": {
+          "value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "value",
+          "count"
+        ],
+        "title": "CommonValue"
+      },
+      "ComparisonExportFormat": {
+        "type": "string",
+        "enum": [
+          "markdown",
+          "csv"
+        ],
+        "title": "ComparisonExportFormat"
+      },
+      "ComparisonInputType": {
+        "type": "string",
+        "enum": [
+          "text",
+          "csv",
+          "json",
+          "xml",
+          "yaml",
+          "sql",
+          "lookml",
+          "dax"
+        ],
+        "title": "ComparisonInputType",
+        "description": "The content type a comparison is resolved to, either detected\nautomatically or forced via an explicit override."
+      },
+      "ComparisonResult": {
+        "properties": {
+          "input_type": {
+            "$ref": "#/components/schemas/ComparisonInputType"
+          },
+          "detected_type_a": {
+            "$ref": "#/components/schemas/ComparisonInputType"
+          },
+          "detected_type_b": {
+            "$ref": "#/components/schemas/ComparisonInputType"
+          },
+          "file_name_a": {
+            "type": "string",
+            "title": "File Name A"
+          },
+          "file_name_b": {
+            "type": "string",
+            "title": "File Name B"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/app__schemas__text_compare__ComparisonSummary"
+          },
+          "text_detail": {
+            "$ref": "#/components/schemas/TextComparisonDetail"
+          },
+          "structured_detail": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StructuredComparisonDetail"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "csv_detail": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CsvComparisonDetail"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sql_detail": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SqlComparisonDetail"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "input_type",
+          "detected_type_a",
+          "detected_type_b",
+          "file_name_a",
+          "file_name_b",
+          "summary",
+          "text_detail"
+        ],
+        "title": "ComparisonResult",
+        "description": "Full, stateless result of a single two-sided comparison."
+      },
+      "CompressionCodec": {
+        "type": "string",
+        "enum": [
+          "snappy",
+          "gzip",
+          "brotli",
+          "none"
+        ],
+        "title": "CompressionCodec",
+        "description": "Parquet compression codecs exposed to users."
+      },
+      "CsvComparisonDetail": {
+        "properties": {
+          "row_count_a": {
+            "type": "integer",
+            "title": "Row Count A"
+          },
+          "row_count_b": {
+            "type": "integer",
+            "title": "Row Count B"
+          },
+          "column_count_a": {
+            "type": "integer",
+            "title": "Column Count A"
+          },
+          "column_count_b": {
+            "type": "integer",
+            "title": "Column Count B"
+          },
+          "columns_added": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Columns Added"
+          },
+          "columns_removed": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Columns Removed"
+          },
+          "rows_added": {
+            "type": "integer",
+            "title": "Rows Added"
+          },
+          "rows_removed": {
+            "type": "integer",
+            "title": "Rows Removed"
+          },
+          "rows_modified": {
+            "type": "integer",
+            "title": "Rows Modified"
+          },
+          "rows_identical": {
+            "type": "integer",
+            "title": "Rows Identical"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/CsvRowDiff"
+            },
+            "type": "array",
+            "title": "Rows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "row_count_a",
+          "row_count_b",
+          "column_count_a",
+          "column_count_b",
+          "columns_added",
+          "columns_removed",
+          "rows_added",
+          "rows_removed",
+          "rows_modified",
+          "rows_identical",
+          "rows"
+        ],
+        "title": "CsvComparisonDetail"
+      },
+      "CsvDelimiter": {
+        "type": "string",
+        "enum": [
+          "comma",
+          "pipe",
+          "tab",
+          "semicolon"
+        ],
+        "title": "CsvDelimiter",
+        "description": "Delimiter choices exposed to users for Parquet -> CSV export."
+      },
+      "CsvQuoting": {
+        "type": "string",
+        "enum": [
+          "standard",
+          "minimal"
+        ],
+        "title": "CsvQuoting",
+        "description": "Quoting style choices exposed to users for Parquet -> CSV export."
+      },
+      "CsvRowDiff": {
+        "properties": {
+          "row_index": {
+            "type": "integer",
+            "title": "Row Index"
+          },
+          "diff_type": {
+            "$ref": "#/components/schemas/DiffType"
+          },
+          "row_a": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Row A"
+          },
+          "row_b": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Row B"
+          },
+          "changed_columns": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Changed Columns"
+          }
+        },
+        "type": "object",
+        "required": [
+          "row_index",
+          "diff_type"
+        ],
+        "title": "CsvRowDiff"
+      },
+      "DiffType": {
+        "type": "string",
+        "enum": [
+          "added",
+          "removed",
+          "modified",
+          "identical"
+        ],
+        "title": "DiffType"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "ok"
+          },
+          "app_name": {
+            "type": "string",
+            "title": "App Name"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          }
+        },
+        "type": "object",
+        "required": [
+          "app_name",
+          "version"
+        ],
+        "title": "HealthResponse",
+        "description": "Response payload for the health check endpoint."
+      },
+      "LineDiff": {
+        "properties": {
+          "line_number_a": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line Number A"
+          },
+          "line_number_b": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line Number B"
+          },
+          "diff_type": {
+            "$ref": "#/components/schemas/DiffType"
+          },
+          "content_a": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content A"
+          },
+          "content_b": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content B"
+          }
+        },
+        "type": "object",
+        "required": [
+          "diff_type"
+        ],
+        "title": "LineDiff",
+        "description": "A single aligned line pair in the side-by-side text view."
+      },
+      "LookmlCompareResult": {
+        "properties": {
+          "project_name_a": {
+            "type": "string",
+            "title": "Project Name A"
+          },
+          "project_name_b": {
+            "type": "string",
+            "title": "Project Name B"
+          },
+          "source_type_a": {
+            "type": "string",
+            "title": "Source Type A",
+            "description": "'pbip_project' or 'lookml_package', auto-detected."
+          },
+          "source_type_b": {
+            "type": "string",
+            "title": "Source Type B",
+            "description": "'pbip_project' or 'lookml_package', auto-detected."
+          },
+          "summary": {
+            "$ref": "#/components/schemas/LookmlCompareSummary"
+          },
+          "views_added": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Views Added"
+          },
+          "views_removed": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Views Removed"
+          },
+          "view_changes": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "View Changes"
+          },
+          "explores_added": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Explores Added"
+          },
+          "explores_removed": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Explores Removed"
+          },
+          "explore_changes": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Explore Changes"
+          },
+          "risk_flags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Risk Flags"
+          }
+        },
+        "type": "object",
+        "required": [
+          "project_name_a",
+          "project_name_b",
+          "source_type_a",
+          "source_type_b",
+          "summary",
+          "views_added",
+          "views_removed",
+          "view_changes",
+          "explores_added",
+          "explores_removed",
+          "explore_changes",
+          "risk_flags"
+        ],
+        "title": "LookmlCompareResult",
+        "description": "Structural diff between two generated LookML packages."
+      },
+      "LookmlCompareSummary": {
+        "properties": {
+          "views_added": {
+            "type": "integer",
+            "title": "Views Added"
+          },
+          "views_removed": {
+            "type": "integer",
+            "title": "Views Removed"
+          },
+          "views_changed": {
+            "type": "integer",
+            "title": "Views Changed"
+          },
+          "explores_added": {
+            "type": "integer",
+            "title": "Explores Added"
+          },
+          "explores_removed": {
+            "type": "integer",
+            "title": "Explores Removed"
+          },
+          "explores_changed": {
+            "type": "integer",
+            "title": "Explores Changed"
+          }
+        },
+        "type": "object",
+        "required": [
+          "views_added",
+          "views_removed",
+          "views_changed",
+          "explores_added",
+          "explores_removed",
+          "explores_changed"
+        ],
+        "title": "LookmlCompareSummary"
+      },
+      "LookmlPreviewResult": {
+        "properties": {
+          "project_name": {
+            "type": "string",
+            "title": "Project Name"
+          },
+          "model_file_name": {
+            "type": "string",
+            "title": "Model File Name"
+          },
+          "model_text": {
+            "type": "string",
+            "title": "Model Text"
+          },
+          "views": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Views"
+          },
+          "explores": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Explores"
+          },
+          "counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Counts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "project_name",
+          "model_file_name",
+          "model_text",
+          "views",
+          "explores",
+          "counts"
+        ],
+        "title": "LookmlPreviewResult",
+        "description": "Structured LookML generated for the Preview LookML module."
+      },
+      "MappedDataType": {
+        "type": "string",
+        "enum": [
+          "string",
+          "integer",
+          "long",
+          "double",
+          "decimal",
+          "boolean",
+          "date",
+          "timestamp"
+        ],
+        "title": "MappedDataType",
+        "description": "The practical datatype set exposed to users for schema overrides."
+      },
+      "ParquetFileMetadata": {
+        "properties": {
+          "file_name": {
+            "type": "string",
+            "title": "File Name",
+            "description": "Original uploaded file name."
+          },
+          "file_size_bytes": {
+            "type": "integer",
+            "title": "File Size Bytes",
+            "description": "Size of the uploaded file in bytes."
+          },
+          "row_count": {
+            "type": "integer",
+            "title": "Row Count",
+            "description": "Total number of rows in the file."
+          },
+          "column_count": {
+            "type": "integer",
+            "title": "Column Count",
+            "description": "Total number of columns in the file."
+          },
+          "row_group_count": {
+            "type": "integer",
+            "title": "Row Group Count",
+            "description": "Number of row groups in the file."
+          },
+          "compression": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Compression",
+            "description": "Compression codec used, if detectable."
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By",
+            "description": "Writer library/version recorded in the file footer, if any."
+          }
+        },
+        "type": "object",
+        "required": [
+          "file_name",
+          "file_size_bytes",
+          "row_count",
+          "column_count",
+          "row_group_count"
+        ],
+        "title": "ParquetFileMetadata",
+        "description": "Summary metadata read from a parquet file's footer (no row data)."
+      },
+      "ParquetRowPage": {
+        "properties": {
+          "rows": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Rows"
+          },
+          "total_row_count": {
+            "type": "integer",
+            "title": "Total Row Count",
+            "description": "Total rows in the file (for pagination)."
+          },
+          "offset": {
+            "type": "integer",
+            "title": "Offset"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "rows",
+          "total_row_count",
+          "offset",
+          "limit"
+        ],
+        "title": "ParquetRowPage",
+        "description": "A single page of row data read from a parquet file."
+      },
+      "ParquetSample": {
+        "properties": {
+          "mode": {
+            "$ref": "#/components/schemas/SampleMode"
+          },
+          "sample_size": {
+            "type": "integer",
+            "title": "Sample Size"
+          },
+          "rows": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Rows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "mode",
+          "sample_size",
+          "rows"
+        ],
+        "title": "ParquetSample",
+        "description": "Row sample for the Sampling tab - never materializes the full dataset."
+      },
+      "ParquetStatistics": {
+        "properties": {
+          "row_count": {
+            "type": "integer",
+            "title": "Row Count"
+          },
+          "column_count": {
+            "type": "integer",
+            "title": "Column Count"
+          },
+          "columns": {
+            "items": {
+              "$ref": "#/components/schemas/ColumnStatistics"
+            },
+            "type": "array",
+            "title": "Columns"
+          }
+        },
+        "type": "object",
+        "required": [
+          "row_count",
+          "column_count",
+          "columns"
+        ],
+        "title": "ParquetStatistics"
+      },
+      "ParquetUploadResult": {
+        "properties": {
+          "file_id": {
+            "type": "string",
+            "title": "File Id",
+            "description": "Opaque session id for follow-up requests."
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/ParquetFileMetadata"
+          },
+          "columns": {
+            "items": {
+              "$ref": "#/components/schemas/ColumnSchema"
+            },
+            "type": "array",
+            "title": "Columns"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file_id",
+          "metadata",
+          "columns"
+        ],
+        "title": "ParquetUploadResult",
+        "description": "Response returned after uploading a parquet file for reading."
+      },
+      "PbipStructureResult": {
+        "properties": {
+          "project_name": {
+            "type": "string",
+            "title": "Project Name"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/PbipStructureStats"
+          },
+          "tables": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Tables"
+          },
+          "measures": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Measures"
+          },
+          "relationships": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Relationships"
+          },
+          "roles": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Roles"
+          },
+          "lineage": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Lineage"
+          },
+          "unused_measures": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Unused Measures"
+          },
+          "unused_tables": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Unused Tables"
+          },
+          "largest_tables": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Largest Tables"
+          }
+        },
+        "type": "object",
+        "required": [
+          "project_name",
+          "stats",
+          "tables",
+          "measures",
+          "relationships",
+          "roles",
+          "lineage",
+          "unused_measures",
+          "unused_tables",
+          "largest_tables"
+        ],
+        "title": "PbipStructureResult",
+        "description": "Full structural breakdown of a PBIP project."
+      },
+      "PbipStructureStats": {
+        "properties": {
+          "total_tables": {
+            "type": "integer",
+            "title": "Total Tables"
+          },
+          "total_columns": {
+            "type": "integer",
+            "title": "Total Columns"
+          },
+          "total_measures": {
+            "type": "integer",
+            "title": "Total Measures"
+          },
+          "total_relationships": {
+            "type": "integer",
+            "title": "Total Relationships"
+          },
+          "total_hierarchies": {
+            "type": "integer",
+            "title": "Total Hierarchies"
+          },
+          "total_roles": {
+            "type": "integer",
+            "title": "Total Roles"
+          },
+          "fact_tables": {
+            "type": "integer",
+            "title": "Fact Tables"
+          },
+          "dimension_tables": {
+            "type": "integer",
+            "title": "Dimension Tables"
+          },
+          "parameter_tables": {
+            "type": "integer",
+            "title": "Parameter Tables"
+          },
+          "unused_measures": {
+            "type": "integer",
+            "title": "Unused Measures"
+          },
+          "unused_tables": {
+            "type": "integer",
+            "title": "Unused Tables"
+          },
+          "complexity_score": {
+            "type": "number",
+            "title": "Complexity Score"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_tables",
+          "total_columns",
+          "total_measures",
+          "total_relationships",
+          "total_hierarchies",
+          "total_roles",
+          "fact_tables",
+          "dimension_tables",
+          "parameter_tables",
+          "unused_measures",
+          "unused_tables",
+          "complexity_score"
+        ],
+        "title": "PbipStructureStats",
+        "description": "Model-overview counters for the Explore PBIP Structure module."
+      },
+      "RiskLevel": {
+        "type": "string",
+        "enum": [
+          "high",
+          "medium",
+          "low",
+          "none"
+        ],
+        "title": "RiskLevel"
+      },
+      "RowGroupStorage": {
+        "properties": {
+          "index": {
+            "type": "integer",
+            "title": "Index"
+          },
+          "row_count": {
+            "type": "integer",
+            "title": "Row Count"
+          },
+          "compressed_size_bytes": {
+            "type": "integer",
+            "title": "Compressed Size Bytes"
+          },
+          "uncompressed_size_bytes": {
+            "type": "integer",
+            "title": "Uncompressed Size Bytes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "index",
+          "row_count",
+          "compressed_size_bytes",
+          "uncompressed_size_bytes"
+        ],
+        "title": "RowGroupStorage"
+      },
+      "SampleMode": {
+        "type": "string",
+        "enum": [
+          "first",
+          "random"
+        ],
+        "title": "SampleMode"
+      },
+      "SchemaComparisonResult": {
+        "properties": {
+          "file_a": {
+            "$ref": "#/components/schemas/ParquetFileMetadata"
+          },
+          "file_b": {
+            "$ref": "#/components/schemas/ParquetFileMetadata"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/app__schemas__parquet__ComparisonSummary"
+          },
+          "drift": {
+            "$ref": "#/components/schemas/SchemaDriftAnalysis"
+          },
+          "columns": {
+            "items": {
+              "$ref": "#/components/schemas/ColumnDiff"
+            },
+            "type": "array",
+            "title": "Columns"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file_a",
+          "file_b",
+          "summary",
+          "drift",
+          "columns"
+        ],
+        "title": "SchemaComparisonResult"
+      },
+      "SchemaDiffType": {
+        "type": "string",
+        "enum": [
+          "added",
+          "removed",
+          "renamed",
+          "type_changed",
+          "nullability_changed",
+          "metadata_changed",
+          "reordered",
+          "identical"
+        ],
+        "title": "SchemaDiffType"
+      },
+      "SchemaDriftAnalysis": {
+        "properties": {
+          "drift_score": {
+            "type": "number",
+            "title": "Drift Score",
+            "description": "0-100: how much the schema has drifted (100 = totally different)."
+          },
+          "match_percentage": {
+            "type": "number",
+            "title": "Match Percentage",
+            "description": "0-100: how much of the schema is unchanged."
+          },
+          "explanation": {
+            "type": "string",
+            "title": "Explanation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "drift_score",
+          "match_percentage",
+          "explanation"
+        ],
+        "title": "SchemaDriftAnalysis"
+      },
+      "SchemaFieldInfo": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Column name."
+          },
+          "detected_type": {
+            "$ref": "#/components/schemas/MappedDataType",
+            "description": "Auto-detected datatype."
+          },
+          "sample_values": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Sample Values",
+            "description": "A few example non-null values from the sample."
+          },
+          "null_percentage": {
+            "type": "number",
+            "title": "Null Percentage",
+            "description": "Percentage of null values within the sampled rows."
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "detected_type",
+          "null_percentage"
+        ],
+        "title": "SchemaFieldInfo",
+        "description": "A single column's detected schema, from a sampled read of the source file."
+      },
+      "SchemaHealth": {
+        "type": "string",
+        "enum": [
+          "matching",
+          "minor_differences",
+          "breaking_changes"
+        ],
+        "title": "SchemaHealth"
+      },
+      "SchemaInspectionResult": {
+        "properties": {
+          "file_name": {
+            "type": "string",
+            "title": "File Name",
+            "description": "Uploaded file name."
+          },
+          "row_sample_count": {
+            "type": "integer",
+            "title": "Row Sample Count",
+            "description": "Number of rows sampled to detect types."
+          },
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/SchemaFieldInfo"
+            },
+            "type": "array",
+            "title": "Fields"
+          },
+          "preview_rows": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Preview Rows",
+            "description": "First few rows of the sample, for a lightweight preview."
+          }
+        },
+        "type": "object",
+        "required": [
+          "file_name",
+          "row_sample_count",
+          "fields"
+        ],
+        "title": "SchemaInspectionResult",
+        "description": "Response for the pre-conversion schema inspection step."
+      },
+      "SqlComparisonDetail": {
+        "properties": {
+          "tables_added": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tables Added"
+          },
+          "tables_removed": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tables Removed"
+          },
+          "joins_added": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Joins Added"
+          },
+          "joins_removed": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Joins Removed"
+          },
+          "filters_added": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Filters Added"
+          },
+          "filters_removed": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Filters Removed"
+          },
+          "columns_added": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Columns Added"
+          },
+          "columns_removed": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Columns Removed"
+          },
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/SqlDiffEntry"
+            },
+            "type": "array",
+            "title": "Entries"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tables_added",
+          "tables_removed",
+          "joins_added",
+          "joins_removed",
+          "filters_added",
+          "filters_removed",
+          "columns_added",
+          "columns_removed",
+          "entries"
+        ],
+        "title": "SqlComparisonDetail"
+      },
+      "SqlDiffEntry": {
+        "properties": {
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "diff_type": {
+            "$ref": "#/components/schemas/DiffType"
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "category",
+          "diff_type",
+          "detail"
+        ],
+        "title": "SqlDiffEntry"
+      },
+      "StorageAnalysis": {
+        "properties": {
+          "compression": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Compression"
+          },
+          "total_compressed_bytes": {
+            "type": "integer",
+            "title": "Total Compressed Bytes"
+          },
+          "total_uncompressed_bytes": {
+            "type": "integer",
+            "title": "Total Uncompressed Bytes"
+          },
+          "overall_compression_ratio": {
+            "type": "number",
+            "title": "Overall Compression Ratio"
+          },
+          "row_groups": {
+            "items": {
+              "$ref": "#/components/schemas/RowGroupStorage"
+            },
+            "type": "array",
+            "title": "Row Groups"
+          },
+          "columns": {
+            "items": {
+              "$ref": "#/components/schemas/ColumnStorage"
+            },
+            "type": "array",
+            "title": "Columns"
+          }
+        },
+        "type": "object",
+        "required": [
+          "compression",
+          "total_compressed_bytes",
+          "total_uncompressed_bytes",
+          "overall_compression_ratio",
+          "row_groups",
+          "columns"
+        ],
+        "title": "StorageAnalysis",
+        "description": "Storage Analysis tab - all derived from footer metadata, no data read."
+      },
+      "StructuredComparisonDetail": {
+        "properties": {
+          "keys_added": {
+            "type": "integer",
+            "title": "Keys Added"
+          },
+          "keys_removed": {
+            "type": "integer",
+            "title": "Keys Removed"
+          },
+          "values_changed": {
+            "type": "integer",
+            "title": "Values Changed"
+          },
+          "array_changes": {
+            "type": "integer",
+            "title": "Array Changes"
+          },
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/StructuredDiffEntry"
+            },
+            "type": "array",
+            "title": "Entries"
+          }
+        },
+        "type": "object",
+        "required": [
+          "keys_added",
+          "keys_removed",
+          "values_changed",
+          "array_changes",
+          "entries"
+        ],
+        "title": "StructuredComparisonDetail"
+      },
+      "StructuredDiffEntry": {
+        "properties": {
+          "path": {
+            "type": "string",
+            "title": "Path"
+          },
+          "diff_type": {
+            "$ref": "#/components/schemas/DiffType"
+          },
+          "value_a": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value A"
+          },
+          "value_b": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value B"
+          }
+        },
+        "type": "object",
+        "required": [
+          "path",
+          "diff_type"
+        ],
+        "title": "StructuredDiffEntry",
+        "description": "A single key-path difference for JSON/YAML/XML comparisons."
+      },
+      "TextComparisonDetail": {
+        "properties": {
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/LineDiff"
+            },
+            "type": "array",
+            "title": "Lines"
+          }
+        },
+        "type": "object",
+        "required": [
+          "lines"
+        ],
+        "title": "TextComparisonDetail",
+        "description": "Baseline line-level diff, always populated regardless of the\nresolved comparison type, so the UI can always render side-by-side."
+      },
+      "ToolCategory": {
+        "type": "string",
+        "enum": [
+          "file_conversion",
+          "formatting",
+          "comparison",
+          "validation",
+          "etl",
+          "data_quality",
+          "metadata",
+          "cloud",
+          "productivity"
+        ],
+        "title": "ToolCategory",
+        "description": "High-level grouping used to organize tools in the catalog UI."
+      },
+      "ToolListResponse": {
+        "properties": {
+          "tools": {
+            "items": {
+              "$ref": "#/components/schemas/ToolMetadata"
+            },
+            "type": "array",
+            "title": "Tools"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tools",
+          "total"
+        ],
+        "title": "ToolListResponse",
+        "description": "Response payload listing all registered tools."
+      },
+      "ToolMetadata": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Unique, stable identifier for the tool."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Human-readable display name."
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "Short description of what the tool does."
+          },
+          "category": {
+            "$ref": "#/components/schemas/ToolCategory"
+          },
+          "icon": {
+            "type": "string",
+            "title": "Icon",
+            "description": "Icon identifier (lucide-react icon name)."
+          },
+          "route": {
+            "type": "string",
+            "title": "Route",
+            "description": "Frontend route path for the tool."
+          },
+          "version": {
+            "type": "string",
+            "title": "Version",
+            "default": "0.1.0"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ToolStatus",
+            "default": "coming_soon"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tags"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "description",
+          "category",
+          "icon",
+          "route"
+        ],
+        "title": "ToolMetadata",
+        "description": "Metadata describing a single tool, served by the registry API."
+      },
+      "ToolStatus": {
+        "type": "string",
+        "enum": [
+          "available",
+          "beta",
+          "coming_soon",
+          "deprecated"
+        ],
+        "title": "ToolStatus",
+        "description": "Lifecycle status of a tool."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "VersionResponse": {
+        "properties": {
+          "app_name": {
+            "type": "string",
+            "title": "App Name"
+          },
+          "tagline": {
+            "type": "string",
+            "title": "Tagline"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "api_version": {
+            "type": "string",
+            "title": "Api Version",
+            "default": "v1"
+          }
+        },
+        "type": "object",
+        "required": [
+          "app_name",
+          "tagline",
+          "version"
+        ],
+        "title": "VersionResponse",
+        "description": "Response payload for the version endpoint."
+      },
+      "app__schemas__parquet__ComparisonSummary": {
+        "properties": {
+          "columns_added": {
+            "type": "integer",
+            "title": "Columns Added"
+          },
+          "columns_removed": {
+            "type": "integer",
+            "title": "Columns Removed"
+          },
+          "columns_modified": {
+            "type": "integer",
+            "title": "Columns Modified"
+          },
+          "type_changes": {
+            "type": "integer",
+            "title": "Type Changes"
+          },
+          "nullability_changes": {
+            "type": "integer",
+            "title": "Nullability Changes"
+          },
+          "metadata_changes": {
+            "type": "integer",
+            "title": "Metadata Changes"
+          },
+          "renamed_columns": {
+            "type": "integer",
+            "title": "Renamed Columns"
+          },
+          "identical_columns": {
+            "type": "integer",
+            "title": "Identical Columns"
+          },
+          "total_differences": {
+            "type": "integer",
+            "title": "Total Differences"
+          },
+          "health": {
+            "$ref": "#/components/schemas/SchemaHealth"
+          }
+        },
+        "type": "object",
+        "required": [
+          "columns_added",
+          "columns_removed",
+          "columns_modified",
+          "type_changes",
+          "nullability_changes",
+          "metadata_changes",
+          "renamed_columns",
+          "identical_columns",
+          "total_differences",
+          "health"
+        ],
+        "title": "ComparisonSummary"
+      },
+      "app__schemas__text_compare__ComparisonSummary": {
+        "properties": {
+          "similarity_score": {
+            "type": "number",
+            "title": "Similarity Score"
+          },
+          "added_count": {
+            "type": "integer",
+            "title": "Added Count"
+          },
+          "removed_count": {
+            "type": "integer",
+            "title": "Removed Count"
+          },
+          "modified_count": {
+            "type": "integer",
+            "title": "Modified Count"
+          },
+          "identical_count": {
+            "type": "integer",
+            "title": "Identical Count"
+          },
+          "total_differences": {
+            "type": "integer",
+            "title": "Total Differences"
+          },
+          "risk_level": {
+            "$ref": "#/components/schemas/RiskLevel"
+          }
+        },
+        "type": "object",
+        "required": [
+          "similarity_score",
+          "added_count",
+          "removed_count",
+          "modified_count",
+          "identical_count",
+          "total_differences",
+          "risk_level"
+        ],
+        "title": "ComparisonSummary"
+      }
+    }
+  }
+}

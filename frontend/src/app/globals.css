@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+/*
+ * Theme is class-based (`.dark` on <html>), not system-preference based,
+ * so Tailwind's `dark:` utility variant must key off the class instead of
+ * `prefers-color-scheme` (Tailwind v4's default).
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Enterprise color system. Light is the default (applied via :root);
+ * dark is opt-in via the `.dark` class on <html>, toggled from Settings
+ * and persisted client-side (see store/use-theme-store.ts). Palette is
+ * intentionally blue/neutral (GitHub/Azure/Linear-inspired) — no purple
+ * accents, no neon, no pure black/white surfaces.
+ */
+:root {
+  --background: #f6f7f9;
+  --foreground: #1e2430;
+  --card: #ffffff;
+  --card-foreground: #1e2430;
+  --popover: #ffffff;
+  --popover-foreground: #1e2430;
+  --border: #e3e6ea;
+  --input: #dde1e6;
+  --ring: #4338ca;
+  --primary: #3730a3;
+  --primary-foreground: #ffffff;
+  --secondary: #eef2f7;
+  --secondary-foreground: #1f2937;
+  --accent: #eef2f7;
+  --accent-foreground: #1e2430;
+  --muted: #f1f3f6;
+  --muted-foreground: #667085;
+
+  /* Calm, low-saturation brand identity — deep indigo into muted violet.
+     Used sparingly: wordmark, hero wash, selected nav accent, primary
+     CTAs. Deliberately desaturated so it reads as premium, not startup. */
+  --gradient-brand: linear-gradient(135deg, #312e81 0%, #6d28d9 100%);
+  --gradient-brand-soft: linear-gradient(135deg, rgba(49, 46, 129, 0.07) 0%, rgba(109, 40, 217, 0.05) 100%);
+
+  /* Richer, dedicated hero-surface treatment — deeper than the generic
+     brand wash so the hero card reads as the page's focal point without
+     tipping into a saturated/marketing look. */
+  --gradient-hero:
+    radial-gradient(120% 140% at 12% -10%, rgba(49, 46, 129, 0.14), transparent 55%),
+    linear-gradient(160deg, rgba(67, 56, 202, 0.16) 0%, rgba(99, 102, 241, 0.08) 45%, rgba(109, 40, 217, 0.12) 100%);
+}
+
+.dark {
+  --background: #12151c;
+  --foreground: #e6e8eb;
+  --card: #181c25;
+  --card-foreground: #e6e8eb;
+  --popover: #181c25;
+  --popover-foreground: #e6e8eb;
+  --border: #2a2f3a;
+  --input: #2a2f3a;
+  --ring: #818cf8;
+  --primary: #a5b4fc;
+  --primary-foreground: #0b0f19;
+  --secondary: #1c2431;
+  --secondary-foreground: #cbd5e1;
+  --accent: #1f2530;
+  --accent-foreground: #e6e8eb;
+  --muted: #1c2028;
+  --muted-foreground: #98a2b3;
+
+  --gradient-brand: linear-gradient(135deg, #6366f1 0%, #a78bfa 100%);
+  --gradient-brand-soft: linear-gradient(135deg, rgba(99, 102, 241, 0.16) 0%, rgba(167, 139, 250, 0.09) 100%);
+
+  /* Dark hero: deep navy/charcoal base with an indigo-violet core and a
+     faint teal glow at the edge — an intentional dark-mode identity
+     rather than an inverted light gradient (GitHub Dark / Linear Dark
+     inspired). */
+  --gradient-hero:
+    radial-gradient(120% 140% at 88% 110%, rgba(19, 78, 74, 0.35), transparent 60%),
+    radial-gradient(120% 140% at 12% -10%, rgba(99, 102, 241, 0.28), transparent 55%),
+    linear-gradient(160deg, rgba(49, 46, 129, 0.55) 0%, rgba(24, 28, 37, 0.85) 55%, rgba(19, 78, 74, 0.25) 100%);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-gradient-brand: var(--gradient-brand);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  font-feature-settings: "cv11", "ss01", "tnum";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.text-gradient-brand {
+  background-image: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.bg-gradient-brand {
+  background-image: var(--gradient-brand);
+}
+
+.bg-gradient-brand-soft {
+  background-image: var(--gradient-brand-soft);
+}
+
+.bg-gradient-hero {
+  background-image: var(--gradient-hero);
+}
+
