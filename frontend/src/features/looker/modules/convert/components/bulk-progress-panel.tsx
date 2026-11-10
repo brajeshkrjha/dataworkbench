@@ -135,7 +135,7 @@ export function BulkSummaryPanel({
           </div>
         ) : null}
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <Button onClick={onDownloadZip} disabled={summary.status !== "completed"}>
             <Download className="h-3.5 w-3.5" />
             Download Generated_LookML_Projects.zip

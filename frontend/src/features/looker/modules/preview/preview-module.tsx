@@ -95,7 +95,7 @@ export function PreviewModule() {
         </CardContent>
       </Card>
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         <Button onClick={() => void run()} disabled={!canRun}>
           {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
           {isLoading ? "Generating preview..." : result ? "Generated" : "Generate Preview"}
@@ -124,7 +124,7 @@ export function PreviewModule() {
       ) : null}
 
       {result && modelNode && selectedNode ? (
-        <div className="grid gap-4 lg:grid-cols-[280px_1fr]">
+        <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[280px_minmax(0,1fr)]">
           <Card className="h-fit">
             <CardHeader className="pb-2">
               <CardTitle className="text-base">Project Explorer</CardTitle>
@@ -143,9 +143,9 @@ export function PreviewModule() {
               />
             </CardContent>
           </Card>
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-medium">{selectedNode.displayName}</p>
+          <div className="flex min-w-0 flex-col gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="min-w-0 truncate text-sm font-medium">{selectedNode.displayName}</p>
               <DownloadFileButton node={selectedNode} />
             </div>
             <CodeViewer code={selectedNode.lookml} fileName={selectedNode.fileName} />

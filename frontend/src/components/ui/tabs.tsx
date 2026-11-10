@@ -71,7 +71,10 @@ export function TabsList({ className, children }: { className?: string; children
     <div
       role="tablist"
       onKeyDown={handleKeyDown}
-      className={cn("inline-flex items-center gap-1 rounded-lg border border-border bg-muted/40 p-1", className)}
+      className={cn(
+        "inline-flex max-w-full items-center gap-1 overflow-x-auto rounded-lg border border-border bg-muted/40 p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+        className
+      )}
     >
       {children}
     </div>
@@ -91,7 +94,7 @@ export function TabsTrigger({ value, children }: { value: string; children: Reac
       tabIndex={isActive ? 0 : -1}
       onClick={() => setValue(value)}
       className={cn(
-        "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+        "shrink-0 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors sm:py-1.5",
         isActive
           ? "bg-card text-foreground shadow-sm"
           : "text-muted-foreground hover:text-foreground"

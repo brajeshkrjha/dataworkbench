@@ -70,26 +70,26 @@ export function CodeViewer({
 
   return (
     <div className={cn("flex flex-col overflow-hidden rounded-lg border border-border", className)}>
-      <div className="flex items-center justify-between gap-2 border-b border-border bg-muted/40 px-3 py-2">
+      <div className="flex flex-col gap-2 border-b border-border bg-muted/40 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
         <p className="truncate font-mono text-xs text-muted-foreground">{fileName ?? "untitled.lkml"}</p>
         <div className="flex items-center gap-2">
-          <div className="relative">
+          <div className="relative min-w-0 flex-1 sm:flex-none">
             <Search className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search in file"
-              className="h-7 w-40 rounded-md border border-border bg-background pl-7 pr-2 text-xs outline-none focus:ring-1 focus:ring-primary"
+              className="h-8 w-full rounded-md border border-border bg-background pl-7 pr-2 text-base outline-none focus:ring-1 focus:ring-primary sm:h-7 sm:w-40 sm:text-xs"
             />
           </div>
           {query ? (
-            <span className="text-xs text-muted-foreground">
+            <span className="shrink-0 text-xs text-muted-foreground">
               {matchCount} {matchCount === 1 ? "match" : "matches"}
             </span>
           ) : null}
         </div>
       </div>
-      <pre className="max-h-[32rem] overflow-auto bg-card p-0 text-xs leading-5">
+      <pre className="max-h-[60dvh] overflow-auto bg-card p-0 text-xs leading-5 sm:max-h-[32rem]">
         <code className="block">
           {lines.map((line, index) => (
             <div key={index} className="flex px-3 hover:bg-muted/30">
