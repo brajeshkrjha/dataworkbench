@@ -74,6 +74,21 @@ npm run dev
 - Backend tools: `http://127.0.0.1:8010/api/v1/tools`
 - Frontend: `http://localhost:3000`
 
+## Deploying to Vercel
+
+Deploy as **two Vercel projects** from the same repo.
+
+1. **Backend**: import the repo, set *Root Directory* to `backend` (entrypoint: `backend/index.py`). Env vars:
+   - `DWB_ENVIRONMENT=production`
+   - `DWB_DEBUG=false`
+   - `DWB_CORS_ORIGINS=["https://<frontend-domain>.vercel.app"]` (JSON list)
+2. **Frontend**: import the repo, set *Root Directory* to `frontend`. Env var:
+   - `NEXT_PUBLIC_API_BASE_URL=https://<backend-domain>.vercel.app/api/v1`
+
+Deploy the backend first, then set the frontend env var, then update the backend CORS origin with the final frontend URL and redeploy.
+
+Serverless limits: request bodies are capped at about 4.5 MB, and bulk-conversion jobs run in-process, so large uploads and long bulk jobs are not reliable on Vercel.
+
 ## Development Workflow
 
 ```powershell
