@@ -117,11 +117,12 @@ cd backend;  .venv\Scripts\python.exe -m scripts.export_openapi
 cd ../frontend; npm run generate:api-types
 ```
 
-`export_openapi --check` and `npm run check:api-types` fail on drift. See [ENGINEERING_REVIEW.md](ENGINEERING_REVIEW.md) for engineering details.
+`export_openapi --check` and `npm run check:api-types` fail on drift.
 
 ## Roadmap
 
 - Persistent job storage for large bulk conversions
 - Broader BI-to-Looker coverage and validation rules
 - Shareable conversion reports
+
 
