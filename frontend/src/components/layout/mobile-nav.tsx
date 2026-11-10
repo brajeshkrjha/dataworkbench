@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import { Menu, X } from "lucide-react";
 
 import { NAV_ICONS } from "@/components/layout/nav-icons";
@@ -18,6 +19,11 @@ import { PRIMARY_NAV } from "@/ui-registry/nav-registry";
 export function MobileNav() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
 
   useEffect(() => {
     if (!isOpen) return;
@@ -46,6 +52,9 @@ export function MobileNav() {
         <Menu className="h-5 w-5" />
       </button>
 
+      {mounted
+        ? createPortal(
+            <div className="md:hidden">
       <div
         aria-hidden
         onClick={() => setIsOpen(false)}
@@ -115,6 +124,10 @@ export function MobileNav() {
           {siteConfig.tagline}
         </p>
       </aside>
+            </div>,
+            document.body
+          )
+        : null}
     </div>
   );
 }
