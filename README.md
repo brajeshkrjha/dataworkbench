@@ -27,23 +27,23 @@ Convert **Power BI PBIP projects into LookML** for Looker, end to end:
 
 **1. Start from a Power BI PBIP project**
 
-![Source PBIP project](docs/screenshots/source_pbip_file.png)
+![Source PBIP project](frontend/docs/screenshots/source_pbip_file.png)
 
 **2. Drop it into the converter**
 
-![Converter page](docs/screenshots/web_app_conversion_page_ui.png)
+![Converter page](frontend/docs/screenshots/web_app_conversion_page_ui.png)
 
 **3. Review the project and generate**
 
-![Page after uploading a PBIP project](docs/screenshots/ui_page_after_uploading_pbip.png)
+![Page after uploading a PBIP project](frontend/docs/screenshots/ui_page_after_uploading_pbip.png)
 
 **4. Get a LookML package with stats (views, explores, relationships, measures)**
 
-![Conversion result](docs/screenshots/result_panel_after_conversion_done.png)
+![Conversion result](frontend/docs/screenshots/result_panel_after_conversion_done.png)
 
 **5. Open the generated LookML, ready for Looker**
 
-![Generated LookML in VS Code](docs/screenshots/lookml_zip_opened_in_vscode.png)
+![Generated LookML in VS Code](frontend/docs/screenshots/lookml_zip_opened_in_vscode.png)
 ## Platform
 
 - Tool registry served by the API; add a tool by dropping in one module, with no other edits
