@@ -11,7 +11,7 @@ export interface BreadcrumbItem {
  * level without hunting for a small arrow. */
 export function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
   return (
-    <nav aria-label="Breadcrumb" className="mb-3 flex flex-wrap items-center gap-1 text-sm">
+    <nav aria-label="Breadcrumb" className="mb-3 flex flex-wrap items-center gap-x-1 gap-y-0.5 text-xs sm:text-sm">
       <Crumb href="/" isFirst>
         <Home className="h-3.5 w-3.5" />
         <span>Home</span>

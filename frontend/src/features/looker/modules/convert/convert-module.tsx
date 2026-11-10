@@ -89,7 +89,7 @@ export function ConvertModule() {
           </Card>
         ) : null}
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <Button onClick={() => void convert()} disabled={!canConvert}>
             {isConverting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
             {isCompleted ? <CheckCircle2 className="h-4 w-4" /> : null}
@@ -162,7 +162,7 @@ export function ConvertModule() {
           </CardContent>
         </Card>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <Button onClick={() => void bulk.start()} disabled={!bulk.canStart}>
             {bulk.isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
             {bulk.isUploading ? "Uploading..." : "Start Bulk Conversion"}

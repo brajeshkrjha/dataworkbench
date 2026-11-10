@@ -2,17 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, LayoutGrid, PanelLeftClose, PanelLeftOpen, Settings } from "lucide-react";
+import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
+import { NAV_ICONS } from "@/components/layout/nav-icons";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/store/use-sidebar-store";
 import { PRIMARY_NAV } from "@/ui-registry/nav-registry";
-
-const NAV_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
-  Home,
-  LayoutGrid,
-  Settings,
-};
 
 export function Sidebar() {
   const pathname = usePathname();

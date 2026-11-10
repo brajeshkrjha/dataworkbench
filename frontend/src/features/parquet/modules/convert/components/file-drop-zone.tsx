@@ -79,7 +79,7 @@ export function FileDropZone({
       onDragOver={handleDragOver}
       onDragLeave={() => setIsDragging(false)}
       className={cn(
-        "flex flex-col items-center justify-center rounded-lg border border-dashed p-10 text-center transition-colors",
+        "flex flex-col items-center justify-center rounded-lg border border-dashed p-6 text-center transition-colors sm:p-10",
         isDragging ? "border-primary bg-accent" : "border-border",
         disabled && "pointer-events-none opacity-60"
       )}

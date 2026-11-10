@@ -45,7 +45,7 @@ export function ExploreModule() {
         </CardContent>
       </Card>
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         <Button onClick={() => void run()} disabled={!canRun}>
           {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
           {isLoading ? "Analyzing..." : result ? "Analyzed" : "Analyze Structure"}
