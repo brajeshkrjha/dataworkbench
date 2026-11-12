@@ -1,5 +1,5 @@
 import type { CollectedEntry } from "@/features/looker/shared/project-collector";
-import { buildStoredZip } from "@/features/looker/shared/zip-writer";
+import { buildCompressedZip } from "@/features/looker/shared/zip-writer";
 
 function readFileBytes(file: File): Promise<Uint8Array> {
   if (typeof file.arrayBuffer === "function") {
@@ -22,5 +22,5 @@ export async function buildProjectZip(entries: CollectedEntry[]): Promise<Blob> 
       data: await readFileBytes(entry.file),
     }))
   );
-  return buildStoredZip(zipEntries);
+  return buildCompressedZip(zipEntries);
 }
