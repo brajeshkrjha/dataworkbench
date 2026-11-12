@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     api_v1_prefix: str = "/api/v1"
     environment: str = "development"
     debug: bool = True
-
+    lazy_heavy_routers: bool = False
     cors_origins: list[str] = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",

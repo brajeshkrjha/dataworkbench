@@ -1,4 +1,4 @@
-"""GCP Looker Utility endpoints.
+﻿"""GCP Looker Utility endpoints.
 
 Modules: Convert PBIP to LookML, Explore PBIP Structure, Preview LookML,
 and Compare LookML Packages. All share the same extraction/parsing step
@@ -9,6 +9,7 @@ import io
 from fastapi import APIRouter, File, UploadFile
 from fastapi.responses import StreamingResponse
 
+from app.api.result_headers import LOOKER_RESULT_HEADERS
 from app.core.exceptions import (
     BulkJobNotFoundError,
     BulkJobNotReadyError,
@@ -40,13 +41,7 @@ MAX_UPLOAD_BYTES = 200 * 1024 * 1024
 # A parent folder of many PBIP projects is naturally much larger than any one of them.
 MAX_BULK_UPLOAD_BYTES = 1024 * 1024 * 1024
 
-RESULT_HEADERS = [
-    "X-Looker-Project-Name",
-    "X-Looker-Views-Generated",
-    "X-Looker-Explores-Generated",
-    "X-Looker-Relationships-Found",
-    "X-Looker-Measures-Found",
-]
+RESULT_HEADERS = LOOKER_RESULT_HEADERS
 
 
 def _result_headers(result: dict) -> dict[str, str]:

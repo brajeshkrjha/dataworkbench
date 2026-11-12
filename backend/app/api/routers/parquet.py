@@ -1,4 +1,4 @@
-"""Parquet Utility endpoints.
+﻿"""Parquet Utility endpoints.
 
 Future Parquet Utility modules (reader, schema viewer, metadata
 explorer, ...) register their endpoints on this router.
@@ -16,6 +16,7 @@ from app.api.dependencies.services import (
     get_parquet_reader_service_singleton,
     get_parquet_schema_comparison_service_singleton,
 )
+from app.api.result_headers import PARQUET_RESULT_HEADERS
 from app.core.config import Settings, get_settings
 from app.core.exceptions import (
     EmptyFileError,
@@ -57,15 +58,7 @@ from app.utils.file_utils import create_temp_file, delete_quietly, get_extension
 
 router = APIRouter(prefix="/tools/parquet-utility", tags=["parquet-utility"])
 
-RESULT_HEADERS = [
-    "X-Conversion-File-Name",
-    "X-Conversion-Source-Format",
-    "X-Conversion-Compression",
-    "X-Conversion-Row-Count",
-    "X-Conversion-Column-Count",
-    "X-Conversion-Source-Bytes",
-    "X-Conversion-Output-Bytes",
-]
+RESULT_HEADERS = PARQUET_RESULT_HEADERS
 
 
 def _result_headers(result: ConversionResult) -> dict[str, str]:
