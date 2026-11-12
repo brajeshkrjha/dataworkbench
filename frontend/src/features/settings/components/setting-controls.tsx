@@ -4,6 +4,8 @@ import { Moon, Sun } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
+import { useTools } from "@/features/tools/hooks/use-tools";
+import { getTotalModuleCount } from "@/features/tools/lib/module-count";
 import { useSystemStatus } from "@/features/tools/hooks/use-system-status";
 import { cn } from "@/lib/utils";
 import { useFavoriteToolsStore } from "@/store/use-favorite-tools-store";
@@ -70,15 +72,18 @@ export function ClearRecentsControl() {
   );
 }
 
-type AboutField = "application" | "backend" | "version" | "api";
+type AboutField = "application" | "backend" | "version" | "api" | "tools" | "modules";
 
 /** Read-only value pulled from the app config or live backend status. */
 export function AboutValue({ field }: { field: AboutField }) {
   const { status } = useSystemStatus();
+  const { tools } = useTools();
   const online = status.state === "online";
 
   let value = "-";
-  if (field === "application") value = siteConfig.name;
+  if (field === "tools") value = String(tools.length);
+  else if (field === "modules") value = String(getTotalModuleCount(tools.map((tool) => tool.id)));
+  else if (field === "application") value = siteConfig.name;
   else if (field === "backend") value = online ? "Online" : status.state === "offline" ? "Unreachable" : "Checking...";
   else if (field === "version") value = online ? status.version.version : "-";
   else value = online ? status.version.api_version : "-";
