@@ -1,13 +1,11 @@
 import { PageHeader } from "@/components/shared/page-header";
-import { ThemeSettings } from "@/features/settings/components/theme-settings";
+import { SettingsView } from "@/features/settings/components/settings-view";
 
 export default function SettingsPage() {
   return (
     <div>
       <PageHeader title="Settings" description="Manage your DataWorkbench preferences." />
-      <div className="flex max-w-xl flex-col gap-4">
-        <ThemeSettings />
-      </div>
+      <SettingsView />
     </div>
   );
 }

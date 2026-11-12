@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import { AppShell } from "@/components/layout/app-shell";
 import { ThemeProvider } from "@/components/layout/theme-provider";
+import { MotionProvider } from "@/components/motion/motion-primitives";
+import { PointerSpotlight } from "@/components/motion/pointer-spotlight";
 import { THEME_STORAGE_KEY } from "@/store/use-theme-store";
 import { siteConfig } from "@/config/site";
 
@@ -56,7 +58,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <ThemeProvider>
-          <AppShell>{children}</AppShell>
+          <MotionProvider>
+            <PointerSpotlight />
+            <AppShell>{children}</AppShell>
+          </MotionProvider>
         </ThemeProvider>
       </body>
     </html>

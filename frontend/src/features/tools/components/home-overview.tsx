@@ -2,14 +2,14 @@
 
 import { EmptyState } from "@/components/shared/empty-state";
 import { FavoriteTools } from "@/features/tools/components/favorite-tools";
-import { QuickActions } from "@/features/tools/components/quick-actions";
 import { RecentTools } from "@/features/tools/components/recent-tools";
+import { SystemStatusCard } from "@/features/tools/components/system-status-card";
 import { ToolGridSkeleton } from "@/features/tools/components/tool-grid-skeleton";
-import { WorkspaceInsights } from "@/features/tools/components/workspace-insights";
+import { WorkflowPanels } from "@/features/tools/components/workflow-panels";
 import { useTools } from "@/features/tools/hooks/use-tools";
 
-/** Discovery-focused Home content: insights, quick access,
- * recents/favorites. Full catalog browsing lives on the Tools tab. */
+/** Home content: direct-to-module workflows, then personal shortcuts
+ * (recents, favorites) alongside live platform status. */
 export function HomeOverview() {
   const { tools, isLoading, error } = useTools();
 
@@ -32,11 +32,12 @@ export function HomeOverview() {
 
   return (
     <div className="flex flex-col gap-8">
-      <WorkspaceInsights />
-      <QuickActions />
-      <FavoriteTools />
-      <RecentTools />
+      <WorkflowPanels />
+      <div className="reveal grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <RecentTools />
+        <FavoriteTools />
+        <SystemStatusCard />
+      </div>
     </div>
   );
 }
-

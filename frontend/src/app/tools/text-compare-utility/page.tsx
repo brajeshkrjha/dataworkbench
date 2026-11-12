@@ -1,5 +1,5 @@
-import { PageHeader } from "@/components/shared/page-header";
-import { TextCompareModule } from "@/features/text-compare/text-compare-module";
+﻿import { PageHeader } from "@/components/shared/page-header";
+import { FeatureCatalog } from "@/features/text-compare/components/feature-catalog";
 import { TrackRecentTool } from "@/features/tools/components/track-recent-tool";
 
 export default function TextCompareUtilityPage() {
@@ -8,10 +8,10 @@ export default function TextCompareUtilityPage() {
       <TrackRecentTool toolId="text-compare-utility" />
       <PageHeader
         title="Text Compare Utility"
-        description="Compare two texts side-by-side and see every difference."
+        description="Compare texts and lists side-by-side and clean up text before you reuse it."
         breadcrumbs={[{ label: "Text Compare Utility" }]}
       />
-      <TextCompareModule />
+      <FeatureCatalog />
     </div>
   );
 }
