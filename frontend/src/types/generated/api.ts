@@ -104,6 +104,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/tools/parquet-utility/convert/inspect": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Inspect a file's schema before conversion
+         * @description Sample an uploaded file and report auto-detected per-column datatypes.
+         *
+         *     Lets the Convert Files UI show detected types, sample values, and null
+         *     rates before conversion, so users can review and override datatypes.
+         */
+        post: operations["inspect_schema_api_v1_tools_parquet_utility_convert_inspect_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/tools/parquet-utility/convert/from-parquet/upload": {
         parameters: {
             query?: never;
@@ -537,6 +560,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/tools/text-compare-utility/compare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Compare two sources (upload, paste, or mixed) with auto type detection */
+        post: operations["compare_api_v1_tools_text_compare_utility_compare_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tools/text-compare-utility/compare/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Export a comparison result as a Markdown or CSV report */
+        post: operations["export_comparison_api_v1_tools_text_compare_utility_compare_export_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/": {
         parameters: {
             query?: never;
@@ -561,6 +618,43 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** Body_compare_api_v1_tools_text_compare_utility_compare_post */
+        Body_compare_api_v1_tools_text_compare_utility_compare_post: {
+            /**
+             * File A
+             * @description Upload for Version A.
+             */
+            file_a?: string | null;
+            /**
+             * File B
+             * @description Upload for Version B.
+             */
+            file_b?: string | null;
+            /**
+             * Text A
+             * @description Pasted content for Version A.
+             */
+            text_a?: string | null;
+            /**
+             * Text B
+             * @description Pasted content for Version B.
+             */
+            text_b?: string | null;
+            /** @description Force a specific comparison type. */
+            type_override?: components["schemas"]["ComparisonInputType"] | null;
+            /**
+             * Ignore Case
+             * @description Treat upper/lower case as equal.
+             * @default false
+             */
+            ignore_case: boolean;
+            /**
+             * Ignore Whitespace
+             * @description Ignore leading/trailing/repeated whitespace.
+             * @default false
+             */
+            ignore_whitespace: boolean;
+        };
         /** Body_compare_lookml_packages_api_v1_tools_gcp_looker_utility_compare_post */
         Body_compare_lookml_packages_api_v1_tools_gcp_looker_utility_compare_post: {
             /**
@@ -618,6 +712,11 @@ export interface components {
              * @description Optional custom output file name (without extension).
              */
             output_file_name?: string | null;
+            /**
+             * Column Types
+             * @description Optional JSON-encoded list of column datatype overrides: [{"column": "Amount", "data_type": "decimal"}, ...]. Omit to keep automatic type inference (currently CSV/TSV only).
+             */
+            column_types?: string | null;
         };
         /** Body_explore_pbip_structure_api_v1_tools_gcp_looker_utility_explore_post */
         Body_explore_pbip_structure_api_v1_tools_gcp_looker_utility_explore_post: {
@@ -650,6 +749,14 @@ export interface components {
              * @description Optional custom output file name (without extension).
              */
             output_file_name?: string | null;
+        };
+        /** Body_inspect_schema_api_v1_tools_parquet_utility_convert_inspect_post */
+        Body_inspect_schema_api_v1_tools_parquet_utility_convert_inspect_post: {
+            /**
+             * File
+             * @description CSV or TSV file to inspect (sampled, not fully read).
+             */
+            file: string;
         };
         /** Body_preview_lookml_package_api_v1_tools_gcp_looker_utility_preview_post */
         Body_preview_lookml_package_api_v1_tools_gcp_looker_utility_preview_post: {
@@ -957,27 +1064,30 @@ export interface components {
          * @enum {string}
          */
         ComparisonExportFormat: "markdown" | "csv";
-        /** ComparisonSummary */
-        ComparisonSummary: {
-            /** Columns Added */
-            columns_added: number;
-            /** Columns Removed */
-            columns_removed: number;
-            /** Columns Modified */
-            columns_modified: number;
-            /** Type Changes */
-            type_changes: number;
-            /** Nullability Changes */
-            nullability_changes: number;
-            /** Metadata Changes */
-            metadata_changes: number;
-            /** Renamed Columns */
-            renamed_columns: number;
-            /** Identical Columns */
-            identical_columns: number;
-            /** Total Differences */
-            total_differences: number;
-            health: components["schemas"]["SchemaHealth"];
+        /**
+         * ComparisonInputType
+         * @description The content type a comparison is resolved to, either detected
+         *     automatically or forced via an explicit override.
+         * @enum {string}
+         */
+        ComparisonInputType: "text" | "csv" | "json" | "xml" | "yaml" | "sql" | "lookml" | "dax";
+        /**
+         * ComparisonResult
+         * @description Full, stateless result of a single two-sided comparison.
+         */
+        ComparisonResult: {
+            input_type: components["schemas"]["ComparisonInputType"];
+            detected_type_a: components["schemas"]["ComparisonInputType"];
+            detected_type_b: components["schemas"]["ComparisonInputType"];
+            /** File Name A */
+            file_name_a: string;
+            /** File Name B */
+            file_name_b: string;
+            summary: components["schemas"]["app__schemas__text_compare__ComparisonSummary"];
+            text_detail: components["schemas"]["TextComparisonDetail"];
+            structured_detail?: components["schemas"]["StructuredComparisonDetail"] | null;
+            csv_detail?: components["schemas"]["CsvComparisonDetail"] | null;
+            sql_detail?: components["schemas"]["SqlComparisonDetail"] | null;
         };
         /**
          * CompressionCodec
@@ -985,6 +1095,31 @@ export interface components {
          * @enum {string}
          */
         CompressionCodec: "snappy" | "gzip" | "brotli" | "none";
+        /** CsvComparisonDetail */
+        CsvComparisonDetail: {
+            /** Row Count A */
+            row_count_a: number;
+            /** Row Count B */
+            row_count_b: number;
+            /** Column Count A */
+            column_count_a: number;
+            /** Column Count B */
+            column_count_b: number;
+            /** Columns Added */
+            columns_added: string[];
+            /** Columns Removed */
+            columns_removed: string[];
+            /** Rows Added */
+            rows_added: number;
+            /** Rows Removed */
+            rows_removed: number;
+            /** Rows Modified */
+            rows_modified: number;
+            /** Rows Identical */
+            rows_identical: number;
+            /** Rows */
+            rows: components["schemas"]["CsvRowDiff"][];
+        };
         /**
          * CsvDelimiter
          * @description Delimiter choices exposed to users for Parquet -> CSV export.
@@ -997,6 +1132,27 @@ export interface components {
          * @enum {string}
          */
         CsvQuoting: "standard" | "minimal";
+        /** CsvRowDiff */
+        CsvRowDiff: {
+            /** Row Index */
+            row_index: number;
+            diff_type: components["schemas"]["DiffType"];
+            /** Row A */
+            row_a?: {
+                [key: string]: unknown;
+            } | null;
+            /** Row B */
+            row_b?: {
+                [key: string]: unknown;
+            } | null;
+            /** Changed Columns */
+            changed_columns?: string[];
+        };
+        /**
+         * DiffType
+         * @enum {string}
+         */
+        DiffType: "added" | "removed" | "modified" | "identical";
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -1016,6 +1172,21 @@ export interface components {
             app_name: string;
             /** Version */
             version: string;
+        };
+        /**
+         * LineDiff
+         * @description A single aligned line pair in the side-by-side text view.
+         */
+        LineDiff: {
+            /** Line Number A */
+            line_number_a?: number | null;
+            /** Line Number B */
+            line_number_b?: number | null;
+            diff_type: components["schemas"]["DiffType"];
+            /** Content A */
+            content_a?: string | null;
+            /** Content B */
+            content_b?: string | null;
         };
         /**
          * LookmlCompareResult
@@ -1095,6 +1266,12 @@ export interface components {
                 [key: string]: number;
             };
         };
+        /**
+         * MappedDataType
+         * @description The practical datatype set exposed to users for schema overrides.
+         * @enum {string}
+         */
+        MappedDataType: "string" | "integer" | "long" | "double" | "decimal" | "boolean" | "date" | "timestamp";
         /**
          * ParquetFileMetadata
          * @description Summary metadata read from a parquet file's footer (no row data).
@@ -1283,7 +1460,7 @@ export interface components {
         SchemaComparisonResult: {
             file_a: components["schemas"]["ParquetFileMetadata"];
             file_b: components["schemas"]["ParquetFileMetadata"];
-            summary: components["schemas"]["ComparisonSummary"];
+            summary: components["schemas"]["app__schemas__parquet__ComparisonSummary"];
             drift: components["schemas"]["SchemaDriftAnalysis"];
             /** Columns */
             columns: components["schemas"]["ColumnDiff"][];
@@ -1309,10 +1486,87 @@ export interface components {
             explanation: string;
         };
         /**
+         * SchemaFieldInfo
+         * @description A single column's detected schema, from a sampled read of the source file.
+         */
+        SchemaFieldInfo: {
+            /**
+             * Name
+             * @description Column name.
+             */
+            name: string;
+            /** @description Auto-detected datatype. */
+            detected_type: components["schemas"]["MappedDataType"];
+            /**
+             * Sample Values
+             * @description A few example non-null values from the sample.
+             */
+            sample_values?: string[];
+            /**
+             * Null Percentage
+             * @description Percentage of null values within the sampled rows.
+             */
+            null_percentage: number;
+        };
+        /**
          * SchemaHealth
          * @enum {string}
          */
         SchemaHealth: "matching" | "minor_differences" | "breaking_changes";
+        /**
+         * SchemaInspectionResult
+         * @description Response for the pre-conversion schema inspection step.
+         */
+        SchemaInspectionResult: {
+            /**
+             * File Name
+             * @description Uploaded file name.
+             */
+            file_name: string;
+            /**
+             * Row Sample Count
+             * @description Number of rows sampled to detect types.
+             */
+            row_sample_count: number;
+            /** Fields */
+            fields: components["schemas"]["SchemaFieldInfo"][];
+            /**
+             * Preview Rows
+             * @description First few rows of the sample, for a lightweight preview.
+             */
+            preview_rows?: {
+                [key: string]: unknown;
+            }[];
+        };
+        /** SqlComparisonDetail */
+        SqlComparisonDetail: {
+            /** Tables Added */
+            tables_added: string[];
+            /** Tables Removed */
+            tables_removed: string[];
+            /** Joins Added */
+            joins_added: string[];
+            /** Joins Removed */
+            joins_removed: string[];
+            /** Filters Added */
+            filters_added: string[];
+            /** Filters Removed */
+            filters_removed: string[];
+            /** Columns Added */
+            columns_added: string[];
+            /** Columns Removed */
+            columns_removed: string[];
+            /** Entries */
+            entries: components["schemas"]["SqlDiffEntry"][];
+        };
+        /** SqlDiffEntry */
+        SqlDiffEntry: {
+            /** Category */
+            category: string;
+            diff_type: components["schemas"]["DiffType"];
+            /** Detail */
+            detail: string;
+        };
         /**
          * StorageAnalysis
          * @description Storage Analysis tab - all derived from footer metadata, no data read.
@@ -1330,6 +1584,41 @@ export interface components {
             row_groups: components["schemas"]["RowGroupStorage"][];
             /** Columns */
             columns: components["schemas"]["ColumnStorage"][];
+        };
+        /** StructuredComparisonDetail */
+        StructuredComparisonDetail: {
+            /** Keys Added */
+            keys_added: number;
+            /** Keys Removed */
+            keys_removed: number;
+            /** Values Changed */
+            values_changed: number;
+            /** Array Changes */
+            array_changes: number;
+            /** Entries */
+            entries: components["schemas"]["StructuredDiffEntry"][];
+        };
+        /**
+         * StructuredDiffEntry
+         * @description A single key-path difference for JSON/YAML/XML comparisons.
+         */
+        StructuredDiffEntry: {
+            /** Path */
+            path: string;
+            diff_type: components["schemas"]["DiffType"];
+            /** Value A */
+            value_a?: string | null;
+            /** Value B */
+            value_b?: string | null;
+        };
+        /**
+         * TextComparisonDetail
+         * @description Baseline line-level diff, always populated regardless of the
+         *     resolved comparison type, so the UI can always render side-by-side.
+         */
+        TextComparisonDetail: {
+            /** Lines */
+            lines: components["schemas"]["LineDiff"][];
         };
         /**
          * ToolCategory
@@ -1423,6 +1712,44 @@ export interface components {
              * @default v1
              */
             api_version: string;
+        };
+        /** ComparisonSummary */
+        app__schemas__parquet__ComparisonSummary: {
+            /** Columns Added */
+            columns_added: number;
+            /** Columns Removed */
+            columns_removed: number;
+            /** Columns Modified */
+            columns_modified: number;
+            /** Type Changes */
+            type_changes: number;
+            /** Nullability Changes */
+            nullability_changes: number;
+            /** Metadata Changes */
+            metadata_changes: number;
+            /** Renamed Columns */
+            renamed_columns: number;
+            /** Identical Columns */
+            identical_columns: number;
+            /** Total Differences */
+            total_differences: number;
+            health: components["schemas"]["SchemaHealth"];
+        };
+        /** ComparisonSummary */
+        app__schemas__text_compare__ComparisonSummary: {
+            /** Similarity Score */
+            similarity_score: number;
+            /** Added Count */
+            added_count: number;
+            /** Removed Count */
+            removed_count: number;
+            /** Modified Count */
+            modified_count: number;
+            /** Identical Count */
+            identical_count: number;
+            /** Total Differences */
+            total_differences: number;
+            risk_level: components["schemas"]["RiskLevel"];
         };
     };
     responses: never;
@@ -1544,6 +1871,39 @@ export interface operations {
                 };
                 content: {
                     "application/vnd.apache.parquet": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    inspect_schema_api_v1_tools_parquet_utility_convert_inspect_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_inspect_schema_api_v1_tools_parquet_utility_convert_inspect_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SchemaInspectionResult"];
                 };
             };
             /** @description Validation Error */
@@ -2325,6 +2685,74 @@ export interface operations {
                 };
                 content: {
                     "text/markdown": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    compare_api_v1_tools_text_compare_utility_compare_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_compare_api_v1_tools_text_compare_utility_compare_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ComparisonResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_comparison_api_v1_tools_text_compare_utility_compare_export_post: {
+        parameters: {
+            query: {
+                format: components["schemas"]["ComparisonExportFormat"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ComparisonResult"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */

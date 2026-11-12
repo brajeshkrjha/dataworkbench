@@ -1,4 +1,4 @@
-"""Failure-path ownership and bounded upload reads for Looker tools."""
+﻿"""Failure-path ownership and bounded upload reads for Looker tools."""
 import io
 import zipfile
 from pathlib import Path
@@ -10,7 +10,7 @@ from app.api.routers.looker import _read_upload
 from app.core.exceptions import EmptyFileError, FileTooLargeError
 from app.services.looker import bulk_discovery, bulk_service
 from app.services.looker.lookml_builder import _unique_field_name
-from app.tests.test_looker import _zip_bytes
+from app.tests.test_looker import CONVERT_URL, _minimal_pbip_project, _zip_bytes
 
 
 @pytest.mark.parametrize("content", [b"1234", b"12"])
@@ -75,3 +75,39 @@ def test_field_name_collision_registry_is_shared_within_but_not_between_views():
     assert _unique_field_name("Region#", first_view) == "region_2"
     assert _unique_field_name("REGION", first_view) == "region_3"
     assert _unique_field_name("Region", set()) == "region"
+
+def test_zip_filters_skip_pbi_cache_and_junk():
+    from app.services.looker.zip_filters import should_skip_zip_entry
+
+    assert should_skip_zip_entry("Sales/Sales.SemanticModel/.pbi/cache.abf")
+    assert should_skip_zip_entry("Sales/Sales.Report/.pbi/localSettings.json")
+    assert should_skip_zip_entry("__MACOSX/Sales/._Sales.pbip")
+    assert not should_skip_zip_entry("Sales/Sales.pbip")
+
+
+def test_extractable_members_rejects_oversized_archive(monkeypatch):
+    from app.core.exceptions import FileTooLargeError
+    from app.services.looker import zip_filters
+
+    monkeypatch.setattr(zip_filters, "MAX_EXTRACTED_FILES", 1)
+    with zipfile.ZipFile(io.BytesIO(_zip_bytes({"a.txt": "1", "b.txt": "2"}))) as zf:
+        with pytest.raises(FileTooLargeError):
+            zip_filters.extractable_members(zf, "big.zip")
+
+
+def test_extractable_members_ignores_cache_when_counting_size(monkeypatch):
+    from app.services.looker import zip_filters
+
+    monkeypatch.setattr(zip_filters, "MAX_EXTRACTED_BYTES", 10)
+    files = {"P/P.SemanticModel/.pbi/cache.abf": "x" * 1000, "P/P.pbip": "{}"}
+    with zipfile.ZipFile(io.BytesIO(_zip_bytes(files))) as zf:
+        assert [i.filename for i in zip_filters.extractable_members(zf, "p.zip")] == ["P/P.pbip"]
+
+
+def test_convert_ignores_pbi_cache_inside_project_zip(client):
+    files = _minimal_pbip_project("Sales")
+    files["Sales.SemanticModel/.pbi/cache.abf"] = "x" * 5000
+    files["Sales.Report/.pbi/localSettings.json"] = "{}"
+    response = client.post(CONVERT_URL, files={"file": ("Sales.zip", _zip_bytes(files), "application/zip")})
+    assert response.status_code == 200
+    assert "cache.abf" not in "".join(zipfile.ZipFile(io.BytesIO(response.content)).namelist())

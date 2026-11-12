@@ -1,4 +1,4 @@
-"""Discovery of multiple PBIP projects inside a single "parent folder" upload.
+﻿"""Discovery of multiple PBIP projects inside a single "parent folder" upload.
 
 Reuses the existing single-project file-resolution logic
 (`file_resolution.resolve_pbip_roots`, `pipeline.find_all_pbip_candidates`)
@@ -15,24 +15,7 @@ from pathlib import Path
 from app.core.exceptions import InvalidZipError
 from app.services.looker.file_resolution import resolve_pbip_roots
 from app.services.looker.pipeline import find_all_pbip_candidates
-
-# Same exclusion rules the single-project folder-upload flow uses on the frontend
-# (project-collector.ts::PBI_CACHE_PATH / JUNK_PATH), applied here so a multi-gigabyte
-# Power BI Desktop cache folder never gets extracted for dozens of projects at once.
-_SKIP_SUFFIXES = (".ds_store", "thumbs.db")
-
-
-def _should_skip_zip_entry(name: str) -> bool:
-    lowered = name.replace("\\", "/").lower()
-    if "/.pbi/" in f"/{lowered}":
-        return True
-    if lowered.endswith("cache.abf"):
-        return True
-    if lowered.endswith(_SKIP_SUFFIXES):
-        return True
-    if "__macosx/" in lowered:
-        return True
-    return Path(name).name.startswith("._")
+from app.services.looker.zip_filters import extractable_members
 
 
 def extract_bulk_upload(upload_bytes: bytes, upload_name: str) -> Path:
@@ -44,11 +27,7 @@ def extract_bulk_upload(upload_bytes: bytes, upload_name: str) -> Path:
     extract_root = Path(tempfile.mkdtemp(prefix="looker-bulk-"))
     try:
         with zipfile.ZipFile(io.BytesIO(upload_bytes)) as zf:
-            for info in zf.infolist():
-                if info.is_dir():
-                    continue
-                if _should_skip_zip_entry(info.filename):
-                    continue
+            for info in extractable_members(zf, upload_name):
                 zf.extract(info, extract_root)
     except zipfile.BadZipFile as exc:
         shutil.rmtree(extract_root, ignore_errors=True)

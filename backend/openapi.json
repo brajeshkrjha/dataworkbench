@@ -1449,6 +1449,18 @@
               }
             ],
             "description": "Force a specific comparison type."
+          },
+          "ignore_case": {
+            "type": "boolean",
+            "title": "Ignore Case",
+            "description": "Treat upper/lower case as equal.",
+            "default": false
+          },
+          "ignore_whitespace": {
+            "type": "boolean",
+            "title": "Ignore Whitespace",
+            "description": "Ignore leading/trailing/repeated whitespace.",
+            "default": false
           }
         },
         "type": "object",

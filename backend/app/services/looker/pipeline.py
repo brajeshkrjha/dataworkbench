@@ -25,6 +25,7 @@ from app.services.looker.lookml_packager import build_lookml_package_name, build
 from app.services.looker.model_parser import parse_model
 from app.services.looker.report_parser import parse_report
 from app.services.looker.usage_analysis import build_clean_views
+from app.services.looker.zip_filters import extractable_members
 
 logger = logging.getLogger(__name__)
 
@@ -107,7 +108,8 @@ def parse_pbip_upload(upload_bytes: bytes, upload_name: str) -> tuple[Path, dict
 
         try:
             with zipfile.ZipFile(io.BytesIO(upload_bytes)) as zf:
-                zf.extractall(extract_root)
+                for info in extractable_members(zf, upload_name):
+                    zf.extract(info, extract_root)
         except zipfile.BadZipFile as exc:
             raise InvalidZipError(upload_name) from exc
 

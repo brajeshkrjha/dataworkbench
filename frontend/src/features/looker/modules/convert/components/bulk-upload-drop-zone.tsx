@@ -10,6 +10,7 @@ import {
   collectDroppedEntries,
   type CollectedEntry,
 } from "@/features/looker/shared/project-collector";
+import { expandZipSelection } from "@/features/looker/shared/zip-reader";
 import { cn } from "@/lib/utils";
 
 type DirectoryInputProps = InputHTMLAttributes<HTMLInputElement> & {
@@ -31,11 +32,23 @@ export function BulkUploadDropZone({
   onReject: (message: string) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const zipInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isReadingZip, setIsReadingZip] = useState(false);
 
-  const handleEntries = (entries: CollectedEntry[]) => {
+  const handleEntries = async (selected: CollectedEntry[]) => {
+    let entries = selected;
+    try {
+      if (selected.length === 1 && /\.zip$/i.test(selected[0].relativePath)) setIsReadingZip(true);
+      entries = await expandZipSelection(selected);
+    } catch (err) {
+      onReject(err instanceof Error ? err.message : "Could not read the ZIP file.");
+      return;
+    } finally {
+      setIsReadingZip(false);
+    }
     if (entries.length === 0) {
-      onReject("Nothing was selected. Choose the parent folder containing your PBIP projects.");
+      onReject("Nothing was selected. Choose the parent folder or ZIP containing your PBIP projects.");
       return;
     }
     onSelect(entries);
@@ -46,7 +59,7 @@ export function BulkUploadDropZone({
     setIsDragging(false);
     if (disabled) return;
     const entries = await collectDroppedEntries(event.dataTransfer);
-    handleEntries(entries);
+    await handleEntries(entries);
   };
 
   const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
@@ -82,16 +95,31 @@ export function BulkUploadDropZone({
       )}
     >
       <FolderUp className="mb-3 h-7 w-7 text-muted-foreground" />
-      <p className="text-sm font-medium">Drop a parent folder containing many PBIP projects</p>
+      <p className="text-sm font-medium">Drop a parent folder (or .zip) containing many PBIP projects</p>
       <p className="mt-1 text-xs text-muted-foreground">
         Every valid `.pbip` project inside is discovered automatically — no manual selection needed.
       </p>
       <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-        <Button variant="outline" size="sm" onClick={() => inputRef.current?.click()}>
+        <Button variant="outline" size="sm" disabled={isReadingZip} onClick={() => inputRef.current?.click()}>
           <FolderUp className="h-3.5 w-3.5" />
           Select parent folder
         </Button>
+        <Button variant="outline" size="sm" disabled={isReadingZip} onClick={() => zipInputRef.current?.click()}>
+          {isReadingZip ? "Reading ZIP..." : "Select ZIP"}
+        </Button>
       </div>
+      <input
+        ref={zipInputRef}
+        type="file"
+        accept=".zip,application/zip"
+        data-testid="bulk-zip-input"
+        className="hidden"
+        onChange={(event) => {
+          const file = event.target.files?.[0];
+          if (file) void handleEntries([{ relativePath: file.name, file }]);
+          event.target.value = "";
+        }}
+      />
       <input
         ref={inputRef}
         type="file"
@@ -102,7 +130,7 @@ export function BulkUploadDropZone({
         onChange={(event) => {
           const files = event.target.files;
           if (files && files.length > 0) {
-            handleEntries(collectDirectoryInputEntries(files));
+            void handleEntries(collectDirectoryInputEntries(files));
           }
           event.target.value = "";
         }}

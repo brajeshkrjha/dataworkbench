@@ -12,6 +12,8 @@ export interface CompareInput {
   fileB: File | null;
   textB: string;
   typeOverride: ComparisonInputType | null;
+  ignoreCase?: boolean;
+  ignoreWhitespace?: boolean;
 }
 
 export const textCompareService = {
@@ -22,6 +24,8 @@ export const textCompareService = {
     if (input.fileB) formData.append("file_b", input.fileB);
     if (input.textB) formData.append("text_b", input.textB);
     if (input.typeOverride) formData.append("type_override", input.typeOverride);
+    if (input.ignoreCase) formData.append("ignore_case", "true");
+    if (input.ignoreWhitespace) formData.append("ignore_whitespace", "true");
 
     return apiPostForm<ComparisonResult>(`${BASE_PATH}/compare`, formData);
   },
