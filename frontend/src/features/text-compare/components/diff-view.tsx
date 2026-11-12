@@ -50,6 +50,32 @@ const MARKER: Record<DiffType, { a: string; b: string }> = {
   identical: { a: "", b: "" },
 };
 
+/** Makes space/tab characters visible so whitespace-only changes can be seen. */
+function showWhitespace(value: string): string {
+  return value.replace(/ /g, "\u00b7").replace(/\t/g, "\u2192");
+}
+
+/** Renders a line; for modified lines the differing segment is highlighted and
+ * its whitespace made visible (e.g. a trailing space shows as a dot). */
+function LineContent({ own, other, highlight }: { own: string; other: string; highlight: boolean }) {
+  if (!highlight || own === other) return <>{own}</>;
+  let start = 0;
+  const max = Math.min(own.length, other.length);
+  while (start < max && own[start] === other[start]) start++;
+  let end = 0;
+  while (end < max - start && own[own.length - 1 - end] === other[other.length - 1 - end]) end++;
+  const middle = own.slice(start, own.length - end);
+  return (
+    <>
+      {own.slice(0, start)}
+      <mark className="rounded-sm bg-yellow-300/70 px-px text-inherit dark:bg-yellow-500/40">
+        {showWhitespace(middle)}
+      </mark>
+      {own.slice(own.length - end)}
+    </>
+  );
+}
+
 /** Side-by-side, synchronized-scroll line diff with search and filter
  * chips - the baseline view, always available regardless of type. */
 export function DiffView({ lines, labelA, labelB }: { lines: LineDiff[]; labelA: string; labelB: string }) {
@@ -124,7 +150,11 @@ export function DiffView({ lines, labelA, labelB }: { lines: LineDiff[]; labelA:
                     {marker.a}
                   </td>
                   <td className={`w-1/2 whitespace-pre-wrap break-all border-r border-border/50 px-2 py-1 ${cell.a}`}>
-                    {line.content_a ?? ""}
+                    <LineContent
+                      own={line.content_a ?? ""}
+                      other={line.content_b ?? ""}
+                      highlight={line.diff_type === "modified"}
+                    />
                   </td>
                   <td
                     className={`w-10 select-none border-r border-border/50 px-2 py-1 text-right text-muted-foreground ${cell.b}`}
@@ -134,7 +164,13 @@ export function DiffView({ lines, labelA, labelB }: { lines: LineDiff[]; labelA:
                   <td className={`w-5 select-none border-r border-border/50 px-1.5 py-1 text-center font-semibold ${cell.b} ${cell.markerB}`}>
                     {marker.b}
                   </td>
-                  <td className={`w-1/2 whitespace-pre-wrap break-all px-2 py-1 ${cell.b}`}>{line.content_b ?? ""}</td>
+                  <td className={`w-1/2 whitespace-pre-wrap break-all px-2 py-1 ${cell.b}`}>
+                    <LineContent
+                      own={line.content_b ?? ""}
+                      other={line.content_a ?? ""}
+                      highlight={line.diff_type === "modified"}
+                    />
+                  </td>
                 </tr>
               );
             })}

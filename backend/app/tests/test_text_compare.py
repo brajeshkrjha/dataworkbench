@@ -107,3 +107,29 @@ def test_export_markdown_and_csv() -> None:
     csv_response = client.post(f"{BASE}/compare/export?format=csv", json=result)
     assert csv_response.status_code == 200
     assert "line_a,line_b,diff_type" in csv_response.text
+
+
+def test_whitespace_only_difference_is_detected() -> None:
+    for text_a, text_b in (
+        ("abc", "abc "),
+        ("select a from t", "select a  from t"),
+        ('{"a": "x"}', '{"a": "x "}'),
+    ):
+        body = client.post(f"{BASE}/compare", data={"text_a": text_a, "text_b": text_b}).json()
+        assert body["summary"]["total_differences"] >= 1, (text_a, body["input_type"])
+        assert body["summary"]["similarity_score"] < 100
+        assert any(line["diff_type"] != "identical" for line in body["text_detail"]["lines"])
+
+
+def test_ignore_case_and_whitespace_options() -> None:
+    base = {"text_a": "Hello  World\nsame", "text_b": "hello world \nsame"}
+    strict = client.post(f"{BASE}/compare", data=base).json()
+    assert strict["summary"]["total_differences"] >= 1
+
+    relaxed = client.post(f"{BASE}/compare", data={**base, "ignore_case": "true", "ignore_whitespace": "true"}).json()
+    assert relaxed["summary"]["total_differences"] == 0
+    assert relaxed["summary"]["similarity_score"] == 100
+
+    case_only = client.post(f"{BASE}/compare", data={**base, "ignore_case": "true"}).json()
+    assert case_only["summary"]["total_differences"] >= 1
+

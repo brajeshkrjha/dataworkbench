@@ -8,7 +8,7 @@ export default function TextCompareUtilityPage() {
       <TrackRecentTool toolId="text-compare-utility" />
       <PageHeader
         title="Text Compare Utility"
-        description="Compare text, CSV, JSON, YAML, XML, SQL, and LookML content with structural intelligence."
+        description="Compare two texts side-by-side and see every difference."
         breadcrumbs={[{ label: "Text Compare Utility" }]}
       />
       <TextCompareModule />

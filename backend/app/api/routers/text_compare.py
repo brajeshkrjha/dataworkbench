@@ -46,13 +46,15 @@ def compare(
     text_a: str | None = Form(default=None, description="Pasted content for Version A."),
     text_b: str | None = Form(default=None, description="Pasted content for Version B."),
     type_override: ComparisonInputType | None = Form(default=None, description="Force a specific comparison type."),
+    ignore_case: bool = Form(default=False, description="Treat upper/lower case as equal."),
+    ignore_whitespace: bool = Form(default=False, description="Ignore leading/trailing/repeated whitespace."),
     service: TextCompareService = Depends(get_text_compare_service_singleton),
     settings: Settings = Depends(get_settings),
 ) -> ComparisonResult:
     content_a, name_a = _resolve_side(file_a, text_a, "Version A", settings)
     content_b, name_b = _resolve_side(file_b, text_b, "Version B", settings)
 
-    return service.compare(content_a, content_b, name_a, name_b, type_override)
+    return service.compare(content_a, content_b, name_a, name_b, type_override, ignore_case, ignore_whitespace)
 
 
 @router.post(

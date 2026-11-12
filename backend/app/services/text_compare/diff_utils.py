@@ -10,12 +10,28 @@ def similarity_ratio(text_a: str, text_b: str) -> float:
     return round(difflib.SequenceMatcher(None, text_a, text_b).ratio() * 100, 1)
 
 
-def line_diff(text_a: str, text_b: str) -> tuple[list[LineDiff], dict[str, int]]:
+def _line_key(line: str, ignore_case: bool, ignore_whitespace: bool) -> str:
+    if ignore_whitespace:
+        line = " ".join(line.split())
+    if ignore_case:
+        line = line.lower()
+    return line
+
+
+def line_diff(
+    text_a: str,
+    text_b: str,
+    ignore_case: bool = False,
+    ignore_whitespace: bool = False,
+) -> tuple[list[LineDiff], dict[str, int]]:
     """Line-level diff via `difflib`, always computed as the baseline
-    side-by-side view regardless of the resolved comparison type."""
+    side-by-side view regardless of the resolved comparison type. The
+    ignore flags only affect matching; original content is displayed."""
     lines_a = text_a.splitlines()
     lines_b = text_b.splitlines()
-    matcher = difflib.SequenceMatcher(None, lines_a, lines_b)
+    keys_a = [_line_key(line, ignore_case, ignore_whitespace) for line in lines_a]
+    keys_b = [_line_key(line, ignore_case, ignore_whitespace) for line in lines_b]
+    matcher = difflib.SequenceMatcher(None, keys_a, keys_b)
 
     result: list[LineDiff] = []
     counts = {"added": 0, "removed": 0, "modified": 0, "identical": 0}

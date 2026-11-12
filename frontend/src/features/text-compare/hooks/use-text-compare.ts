@@ -12,6 +12,10 @@ interface TextCompareState {
   fileB: File | null;
   textB: string;
   typeOverride: ComparisonInputType | null;
+  ignoreCase: boolean;
+  ignoreWhitespace: boolean;
+  /** Bumped on swap/reset so uncontrolled inputs remount with fresh state. */
+  version: number;
   isComparing: boolean;
   isExporting: boolean;
   error: string | null;
@@ -23,7 +27,10 @@ const INITIAL_STATE: TextCompareState = {
   textA: "",
   fileB: null,
   textB: "",
-  typeOverride: null,
+  typeOverride: "text",
+  ignoreCase: false,
+  ignoreWhitespace: false,
+  version: 0,
   isComparing: false,
   isExporting: false,
   error: null,
@@ -55,6 +62,27 @@ export function useTextCompare() {
     setState((previous) => ({ ...previous, typeOverride: type, result: null }));
   }, []);
 
+  const setIgnoreCase = useCallback((value: boolean) => {
+    setState((previous) => ({ ...previous, ignoreCase: value, result: null }));
+  }, []);
+
+  const setIgnoreWhitespace = useCallback((value: boolean) => {
+    setState((previous) => ({ ...previous, ignoreWhitespace: value, result: null }));
+  }, []);
+
+  const swap = useCallback(() => {
+    setState((previous) => ({
+      ...previous,
+      fileA: previous.fileB,
+      textA: previous.textB,
+      fileB: previous.fileA,
+      textB: previous.textA,
+      result: null,
+      error: null,
+      version: previous.version + 1,
+    }));
+  }, []);
+
   const setError = useCallback((error: string) => {
     setState((previous) => ({ ...previous, error }));
   }, []);
@@ -73,6 +101,8 @@ export function useTextCompare() {
         fileB: state.fileB,
         textB: state.textB,
         typeOverride: state.typeOverride,
+        ignoreCase: state.ignoreCase,
+        ignoreWhitespace: state.ignoreWhitespace,
       });
       setState((previous) => ({ ...previous, isComparing: false, result }));
     } catch (err) {
@@ -82,7 +112,7 @@ export function useTextCompare() {
         error: err instanceof Error ? err.message : "Failed to compare content.",
       }));
     }
-  }, [hasInputA, hasInputB, state.isComparing, state.fileA, state.textA, state.fileB, state.textB, state.typeOverride]);
+  }, [hasInputA, hasInputB, state.isComparing, state.fileA, state.textA, state.fileB, state.textB, state.typeOverride, state.ignoreCase, state.ignoreWhitespace]);
 
   const exportReport = useCallback(
     async (format: ComparisonExportFormat) => {
@@ -105,7 +135,7 @@ export function useTextCompare() {
   );
 
   const reset = useCallback(() => {
-    setState(INITIAL_STATE);
+    setState((previous) => ({ ...INITIAL_STATE, version: previous.version + 1 }));
   }, []);
 
   return {
@@ -118,6 +148,9 @@ export function useTextCompare() {
     setFileB,
     setTextB,
     setTypeOverride,
+    setIgnoreCase,
+    setIgnoreWhitespace,
+    swap,
     setError,
     compare,
     exportReport,

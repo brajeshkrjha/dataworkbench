@@ -12,7 +12,7 @@ from app.services.text_compare.comparators.sql_comparator import SqlComparator
 from app.services.text_compare.comparators.structured_comparator import StructuredComparator
 from app.services.text_compare.comparators.text_comparator import TextComparator
 from app.services.text_compare.detection import detect_type
-from app.services.text_compare.diff_utils import line_diff, risk_from_counts
+from app.services.text_compare.diff_utils import _line_key, line_diff, risk_from_counts, similarity_ratio
 
 _STRUCTURED_TYPES = {ComparisonInputType.JSON, ComparisonInputType.YAML, ComparisonInputType.XML}
 
@@ -30,16 +30,40 @@ class TextCompareService:
         file_name_a: str | None,
         file_name_b: str | None,
         type_override: ComparisonInputType | None = None,
+        ignore_case: bool = False,
+        ignore_whitespace: bool = False,
     ) -> ComparisonResult:
         detected_a = detect_type(text_a, file_name_a)
         detected_b = detect_type(text_b, file_name_b)
         resolved_type = type_override or detected_a
 
-        text_lines, _ = line_diff(text_a, text_b)
+        text_lines, text_counts = line_diff(text_a, text_b, ignore_case, ignore_whitespace)
         text_detail = TextComparisonDetail(lines=text_lines)
 
         comparator = self._resolve_comparator(resolved_type)
         output = comparator.compare(text_a, text_b)
+
+        if ignore_case or ignore_whitespace:
+            norm_a = "\n".join(_line_key(line, ignore_case, ignore_whitespace) for line in text_a.splitlines())
+            norm_b = "\n".join(_line_key(line, ignore_case, ignore_whitespace) for line in text_b.splitlines())
+            output.added = text_counts["added"]
+            output.removed = text_counts["removed"]
+            output.modified = text_counts["modified"]
+            output.identical = text_counts["identical"]
+            output.similarity_score = similarity_ratio(norm_a, norm_b)
+        elif (
+            text_a != text_b
+            and output.added + output.removed + output.modified == 0
+            and text_counts["added"] + text_counts["removed"] + text_counts["modified"] > 0
+        ):
+            # Specialized comparators normalize whitespace (SQL) or parse it away
+            # (JSON/YAML/XML); fall back to the line-level counts so a raw
+            # difference (e.g. trailing spaces) is still reported.
+            output.added = text_counts["added"]
+            output.removed = text_counts["removed"]
+            output.modified = text_counts["modified"]
+            output.identical = text_counts["identical"]
+            output.similarity_score = min(output.similarity_score, similarity_ratio(text_a, text_b))
 
         total = output.added + output.removed + output.modified + output.identical
         summary = ComparisonSummary(

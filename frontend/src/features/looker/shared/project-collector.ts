@@ -96,6 +96,12 @@ const JUNK_PATH = /(^|\/)(__MACOSX\/|\.DS_Store$|Thumbs\.db$|\._)/i;
  */
 const PBI_CACHE_PATH = /(^|\/)\.pbi\//i;
 
+/** True for archive junk and the Power BI cache, which are never part of a project. */
+export function isExcludedPath(path: string): boolean {
+  const normalized = path.replace(/\\/g, "/");
+  return JUNK_PATH.test(normalized) || PBI_CACHE_PATH.test(normalized);
+}
+
 /** ZIP entries and `webkitRelativePath` disagree on separators and leading "./". */
 function normalizePath(path: string): string {
   return path.replace(/\\/g, "/").replace(/^\.\//, "").replace(/^\/+/, "");

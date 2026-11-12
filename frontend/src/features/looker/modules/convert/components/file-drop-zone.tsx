@@ -9,6 +9,7 @@ import {
   collectDroppedEntries,
   type CollectedEntry,
 } from "@/features/looker/shared/project-collector";
+import { expandZipSelection } from "@/features/looker/shared/zip-reader";
 import { cn } from "@/lib/utils";
 
 export interface SelectedProjectSummary {
@@ -34,11 +35,23 @@ export function FileDropZone({
   onReject: (message: string) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const zipInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isReadingZip, setIsReadingZip] = useState(false);
 
-  const handleEntries = (entries: CollectedEntry[]) => {
+  const handleEntries = async (selected: CollectedEntry[]) => {
+    let entries = selected;
+    try {
+      if (selected.length === 1 && /\.zip$/i.test(selected[0].relativePath)) setIsReadingZip(true);
+      entries = await expandZipSelection(selected);
+    } catch (err) {
+      onReject(err instanceof Error ? err.message : "Could not read the ZIP file.");
+      return;
+    } finally {
+      setIsReadingZip(false);
+    }
     if (entries.length === 0) {
-      onReject("Nothing was selected. Choose the folder containing your .pbip file.");
+      onReject("Nothing was selected. Choose the folder or ZIP containing your .pbip file.");
       return;
     }
     if (entries.length === 1 && /\.pbip$/i.test(entries[0].relativePath)) {
@@ -57,7 +70,7 @@ export function FileDropZone({
     setIsDragging(false);
     if (disabled) return;
     const entries = await collectDroppedEntries(event.dataTransfer);
-    handleEntries(entries);
+    await handleEntries(entries);
   };
 
   const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
@@ -106,14 +119,29 @@ export function FileDropZone({
       <FileUp className="mb-3 h-7 w-7 text-muted-foreground" />
       <p className="text-sm font-medium">Drop your PBIP project here</p>
       <p className="mt-1 text-xs text-muted-foreground">
-        Select the folder containing your .pbip file — everything else it needs is found
-        automatically.
+        Select the folder containing your .pbip file, or a .zip of it — everything else it needs is
+        found automatically.
       </p>
       <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-        <Button variant="outline" size="sm" onClick={() => inputRef.current?.click()}>
+        <Button variant="outline" size="sm" disabled={isReadingZip} onClick={() => inputRef.current?.click()}>
           Select PBIP project
         </Button>
+        <Button variant="outline" size="sm" disabled={isReadingZip} onClick={() => zipInputRef.current?.click()}>
+          {isReadingZip ? "Reading ZIP..." : "Select ZIP"}
+        </Button>
       </div>
+      <input
+        ref={zipInputRef}
+        type="file"
+        accept=".zip,application/zip"
+        data-testid="looker-zip-input"
+        className="hidden"
+        onChange={(event) => {
+          const file = event.target.files?.[0];
+          if (file) void handleEntries([{ relativePath: file.name, file }]);
+          event.target.value = "";
+        }}
+      />
       <input
         ref={inputRef}
         type="file"
@@ -124,7 +152,7 @@ export function FileDropZone({
         onChange={(event) => {
           const files = event.target.files;
           if (files && files.length > 0) {
-            handleEntries(collectDirectoryInputEntries(files));
+            void handleEntries(collectDirectoryInputEntries(files));
           }
           event.target.value = "";
         }}
