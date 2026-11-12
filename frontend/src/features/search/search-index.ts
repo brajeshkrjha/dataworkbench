@@ -9,6 +9,7 @@
 import { CATEGORY_LABELS } from "@/constants/tool-metadata";
 import { PARQUET_MODULES } from "@/features/parquet/registry/module-registry";
 import type { SearchResultItem } from "@/features/search/types";
+import { TEXT_COMPARE_MODULES } from "@/features/text-compare/registry/module-registry";
 import type { ToolMetadata } from "@/types/tool";
 
 interface FeatureLike {
@@ -20,6 +21,7 @@ interface FeatureLike {
 
 const TOOL_FEATURE_PROVIDERS: Record<string, () => FeatureLike[]> = {
   "parquet-utility": () => PARQUET_MODULES,
+  "text-compare-utility": () => TEXT_COMPARE_MODULES,
 };
 
 export function buildSearchIndex(tools: ToolMetadata[]): SearchResultItem[] {

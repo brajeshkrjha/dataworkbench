@@ -8,10 +8,12 @@
  */
 import { LOOKER_MODULES } from "@/features/looker/registry/module-registry";
 import { PARQUET_MODULES } from "@/features/parquet/registry/module-registry";
+import { TEXT_COMPARE_MODULES } from "@/features/text-compare/registry/module-registry";
 
 const MODULE_COUNTS_BY_TOOL_ID: Record<string, number> = {
   "parquet-utility": PARQUET_MODULES.length,
   "gcp-looker-utility": LOOKER_MODULES.length,
+  "text-compare-utility": TEXT_COMPARE_MODULES.length,
 };
 
 export function getToolModuleCount(toolId: string): number {

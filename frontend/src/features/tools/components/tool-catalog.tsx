@@ -1,7 +1,8 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { Search } from "lucide-react";
 
 import { EmptyState } from "@/components/shared/empty-state";
 import { ToolGrid } from "@/features/tools/components/tool-grid";
@@ -23,15 +24,21 @@ export function ToolCatalog() {
     isToolCategory(initialCategory) ? initialCategory : "all"
   );
 
+  const [query, setQuery] = useState("");
+
   const categories = useMemo(() => {
     const present = new Set(tools.map((tool) => tool.category));
     return Array.from(present);
   }, [tools]);
 
   const filteredTools = useMemo(() => {
-    if (activeCategory === "all") return tools;
-    return tools.filter((tool) => tool.category === activeCategory);
-  }, [tools, activeCategory]);
+    const q = query.trim().toLowerCase();
+    return tools.filter((tool) => {
+      if (activeCategory !== "all" && tool.category !== activeCategory) return false;
+      if (!q) return true;
+      return [tool.name, tool.description, ...(tool.tags ?? [])].join(" ").toLowerCase().includes(q);
+    });
+  }, [tools, activeCategory, query]);
 
   if (isLoading) {
     return <ToolGridSkeleton />;
@@ -57,6 +64,17 @@ export function ToolCatalog() {
 
   return (
     <div className="flex flex-col gap-6">
+      <div className="relative max-w-md">
+        <Search aria-hidden className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search tools..."
+          aria-label="Search tools"
+          className="h-10 w-full rounded-lg border border-border bg-background pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+        />
+      </div>
       <div className="flex flex-wrap gap-2">
         <button
           onClick={() => setActiveCategory("all")}
@@ -84,7 +102,12 @@ export function ToolCatalog() {
           </button>
         ))}
       </div>
-      <ToolGrid tools={filteredTools} />
+      {filteredTools.length > 0 ? (
+        <ToolGrid tools={filteredTools} />
+      ) : (
+        <EmptyState title="No tools found" description="Try a different search or category." />
+      )}
     </div>
   );
 }
+

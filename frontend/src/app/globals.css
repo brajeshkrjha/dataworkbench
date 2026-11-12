@@ -102,6 +102,12 @@
   --color-gradient-brand: var(--gradient-brand);
 }
 
+html {
+  /* Tailwind sizing is rem-based; 14px (vs 16px default) scales text,
+   * spacing and blocks down ~12% app-wide for a denser, better-fitting UI. */
+  font-size: 14px;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
@@ -130,3 +136,239 @@ body {
   background-image: var(--gradient-hero);
 }
 
+
+/* ==========================================================================
+ * Modern CSS layer: @property, scroll-driven animations, container queries,
+ * :has(), color-mix(), @starting-style, logical props, view-friendly polish.
+ * Everything animated is disabled under prefers-reduced-motion.
+ * ========================================================================== */
+
+/* Typed custom properties let the browser interpolate gradients/angles. */
+@property --angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@property --mx {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 50%;
+}
+@property --my {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 50%;
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--muted-foreground) 40%, transparent) transparent;
+  accent-color: var(--primary);
+}
+
+::selection {
+  background: color-mix(in oklab, var(--primary) 28%, transparent);
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Subtle dotted grid + vignette behind the whole app. */
+body {
+  background-image:
+    radial-gradient(color-mix(in oklab, var(--foreground) 7%, transparent) 1px, transparent 1px),
+    radial-gradient(60% 40% at 50% -5%, color-mix(in oklab, var(--primary) 10%, transparent), transparent 70%);
+  background-size: 22px 22px, 100% 100%;
+  background-attachment: fixed;
+}
+
+/* Scroll progress bar, pure CSS via scroll-driven animation. */
+@keyframes scroll-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.scroll-progress {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 60;
+  block-size: 2px;
+  transform-origin: 0 50%;
+  background: var(--gradient-brand);
+  animation: scroll-progress linear both;
+  animation-timeline: scroll(root);
+}
+
+/* Reveal-on-scroll without JS. */
+@keyframes reveal-up {
+  from { opacity: 0; translate: 0 24px; scale: 0.98; }
+  to { opacity: 1; translate: 0 0; scale: 1; }
+}
+.reveal {
+  animation: reveal-up linear both;
+  animation-timeline: view();
+  animation-range: entry 0% cover 28%;
+}
+
+/* Aurora: slowly drifting blurred colour blobs (hero background). */
+@keyframes aurora-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33% { transform: translate3d(6%, -8%, 0) scale(1.15); }
+  66% { transform: translate3d(-7%, 6%, 0) scale(0.95); }
+}
+.aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.aurora::before,
+.aurora::after {
+  content: "";
+  position: absolute;
+  inline-size: 55%;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  filter: blur(70px);
+  opacity: 0.45;
+  animation: aurora-drift 18s ease-in-out infinite;
+}
+.aurora::before {
+  inset-block-start: -35%;
+  inset-inline-start: -10%;
+  background: color-mix(in oklab, #6366f1 70%, transparent);
+}
+.aurora::after {
+  inset-block-end: -45%;
+  inset-inline-end: -8%;
+  background: color-mix(in oklab, #14b8a6 55%, transparent);
+  animation-delay: -9s;
+  animation-direction: reverse;
+}
+
+/* Rotating conic gradient border (uses @property --angle). */
+@keyframes spin-angle {
+  to { --angle: 360deg; }
+}
+.glow-border {
+  position: relative;
+}
+.glow-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(from var(--angle), transparent 0 55%, var(--primary) 78%, #14b8a6 90%, transparent 100%);
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: spin-angle 8s linear infinite;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+/* Cursor spotlight: --mx/--my are set by <PointerSpotlight/>. */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+.spotlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    240px circle at var(--mx) var(--my),
+    color-mix(in oklab, var(--primary) 16%, transparent),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+.spotlight:hover::after {
+  opacity: 1;
+}
+
+/* Glass surface + soft layered shadows. */
+.glass {
+  background: color-mix(in oklab, var(--card) 70%, transparent);
+  backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid color-mix(in oklab, var(--border) 80%, transparent);
+}
+.shadow-elevated {
+  box-shadow:
+    0 1px 1px rgb(16 24 40 / 0.04),
+    0 4px 8px -2px rgb(16 24 40 / 0.06),
+    0 18px 40px -12px color-mix(in oklab, var(--primary) 28%, transparent);
+}
+
+/* Container queries: cards adapt to their own width, not the viewport. */
+.cq {
+  container-type: inline-size;
+}
+@container (max-width: 260px) {
+  .cq-hide-sm {
+    display: none;
+  }
+}
+
+/* :has() — highlight a row/card when anything inside has focus. */
+.focus-card:has(:focus-visible) {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 22%, transparent);
+}
+
+/* Entry animation for elements added to the DOM (popovers, toasts). */
+@starting-style {
+  .enter {
+    opacity: 0;
+    translate: 0 8px;
+  }
+}
+.enter {
+  transition: opacity 0.3s, translate 0.3s;
+}
+
+/* Shimmer for skeletons. */
+@keyframes shimmer {
+  to { background-position: -200% 0; }
+}
+.animate-shimmer {
+  background-image: linear-gradient(90deg, transparent 0%, color-mix(in oklab, var(--foreground) 6%, transparent) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .aurora::before,
+  .aurora::after,
+  .glow-border::before,
+  .scroll-progress,
+  .animate-shimmer {
+    animation: none;
+  }
+  .reveal {
+    animation: none;
+    opacity: 1;
+  }
+}
