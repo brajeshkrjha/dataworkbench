@@ -92,11 +92,12 @@ export function CompareSourceDropZone({
 
   return (
     <div
+      onClick={() => folderInputRef.current?.click()}
       onDrop={(event) => void handleDrop(event)}
       onDragOver={handleDragOver}
       onDragLeave={() => setIsDragging(false)}
       className={cn(
-        "flex flex-col items-center justify-center rounded-lg border border-dashed p-6 text-center transition-colors sm:p-10",
+        "flex cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed p-6 text-center transition-colors sm:p-10",
         isDragging ? "border-primary bg-accent" : "border-border",
         disabled && "pointer-events-none opacity-60"
       )}
@@ -107,11 +108,11 @@ export function CompareSourceDropZone({
         The source type is detected automatically — no need to say which is which.
       </p>
       <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-        <Button variant="outline" size="sm" onClick={() => folderInputRef.current?.click()}>
+        <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); folderInputRef.current?.click(); }}>
           <FileUp className="h-3.5 w-3.5" />
           Select PBIP project
         </Button>
-        <Button variant="outline" size="sm" onClick={() => zipInputRef.current?.click()}>
+        <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); zipInputRef.current?.click(); }}>
           <FileArchive className="h-3.5 w-3.5" />
           Select LookML package .zip
         </Button>
@@ -121,6 +122,7 @@ export function CompareSourceDropZone({
         type="file"
         data-testid="compare-folder-input"
         className="hidden"
+        onClick={(e) => e.stopPropagation()}
         multiple
         {...directoryInputProps}
         onChange={(event) => {
@@ -136,6 +138,7 @@ export function CompareSourceDropZone({
         type="file"
         data-testid="compare-zip-input"
         className="hidden"
+        onClick={(e) => e.stopPropagation()}
         accept=".zip,application/zip"
         onChange={(event) => {
           const files = event.target.files;

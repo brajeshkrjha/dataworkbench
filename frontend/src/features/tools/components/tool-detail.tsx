@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 
 import { EmptyState } from "@/components/shared/empty-state";
-import { ToolIcon } from "@/components/shared/tool-icon";
+import { ToolLogo } from "@/components/shared/tool-logo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toolService } from "@/services/tool-service";
 import { CATEGORY_LABELS } from "@/constants/tool-metadata";
@@ -57,9 +57,7 @@ export function ToolDetail({ toolId }: { toolId: string }) {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-start gap-4 rounded-xl border border-border bg-card p-6">
-        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-secondary text-secondary-foreground">
-          <ToolIcon name={tool.icon} className="h-6 w-6" />
-        </div>
+        <ToolLogo toolId={tool.id} icon={tool.icon} size="lg" />
         <div className="flex-1">
           <h1 className="text-xl font-semibold tracking-tight">{tool.name}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{tool.description}</p>
@@ -78,3 +76,4 @@ export function ToolDetail({ toolId }: { toolId: string }) {
     </div>
   );
 }
+

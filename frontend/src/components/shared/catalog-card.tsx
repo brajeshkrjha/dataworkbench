@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ToolIcon } from "@/components/shared/tool-icon";
+import { ToolLogo, TOOL_LOGOS } from "@/components/shared/tool-logo";
 import { cn } from "@/lib/utils";
 
 /**
@@ -13,6 +14,7 @@ import { cn } from "@/lib/utils";
  * app looks and behaves identically as more tools/modules are added.
  */
 export function CatalogCard({
+  toolId,
   icon,
   title,
   description,
@@ -24,6 +26,7 @@ export function CatalogCard({
   isFavorite,
   onToggleFavorite,
 }: {
+  toolId?: string;
   icon: string;
   title: string;
   description: string;
@@ -45,9 +48,13 @@ export function CatalogCard({
     >
       <CardHeader>
         <div className="flex items-start justify-between gap-2">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-secondary text-primary transition-colors group-hover:bg-gradient-brand group-hover:text-white">
-            <ToolIcon name={icon} className="h-5 w-5" />
-          </div>
+          {toolId && TOOL_LOGOS[toolId] ? (
+            <ToolLogo toolId={toolId} icon={icon} size="md" />
+          ) : (
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-secondary text-primary transition-colors group-hover:bg-gradient-brand group-hover:text-white">
+              <ToolIcon name={icon} className="h-5 w-5" />
+            </div>
+          )}
           <div className="flex items-center gap-1">
             {badge}
             {onToggleFavorite ? (

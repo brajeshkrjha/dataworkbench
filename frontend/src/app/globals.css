@@ -11,7 +11,7 @@
  * Enterprise color system. Light is the default (applied via :root);
  * dark is opt-in via the `.dark` class on <html>, toggled from Settings
  * and persisted client-side (see store/use-theme-store.ts). Palette is
- * intentionally blue/neutral (GitHub/Azure/Linear-inspired) — no purple
+ * intentionally blue/neutral (GitHub/Azure/Linear-inspired) â€” no purple
  * accents, no neon, no pure black/white surfaces.
  */
 :root {
@@ -33,13 +33,13 @@
   --muted: #f1f3f6;
   --muted-foreground: #667085;
 
-  /* Calm, low-saturation brand identity — deep indigo into muted violet.
+  /* Calm, low-saturation brand identity â€” deep indigo into muted violet.
      Used sparingly: wordmark, hero wash, selected nav accent, primary
      CTAs. Deliberately desaturated so it reads as premium, not startup. */
   --gradient-brand: linear-gradient(135deg, #312e81 0%, #6d28d9 100%);
   --gradient-brand-soft: linear-gradient(135deg, rgba(49, 46, 129, 0.07) 0%, rgba(109, 40, 217, 0.05) 100%);
 
-  /* Richer, dedicated hero-surface treatment — deeper than the generic
+  /* Richer, dedicated hero-surface treatment â€” deeper than the generic
      brand wash so the hero card reads as the page's focal point without
      tipping into a saturated/marketing look. */
   --gradient-hero:
@@ -70,7 +70,7 @@
   --gradient-brand-soft: linear-gradient(135deg, rgba(99, 102, 241, 0.16) 0%, rgba(167, 139, 250, 0.09) 100%);
 
   /* Dark hero: deep navy/charcoal base with an indigo-violet core and a
-     faint teal glow at the edge — an intentional dark-mode identity
+     faint teal glow at the edge â€” an intentional dark-mode identity
      rather than an inverted light gradient (GitHub Dark / Linear Dark
      inspired). */
   --gradient-hero:
@@ -181,10 +181,11 @@ p {
   text-wrap: pretty;
 }
 
-:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
-  border-radius: 6px;
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
 }
 
 /* Subtle dotted grid + vignette behind the whole app. */
@@ -207,6 +208,7 @@ body {
   inset-inline: 0;
   z-index: 60;
   block-size: 2px;
+  transform: scaleX(0);
   transform-origin: 0 50%;
   background: var(--gradient-brand);
   animation: scroll-progress linear both;
@@ -244,8 +246,8 @@ body {
   inline-size: 55%;
   aspect-ratio: 1;
   border-radius: 9999px;
-  filter: blur(70px);
-  opacity: 0.45;
+  filter: blur(80px);
+  opacity: 0.18;
   animation: aurora-drift 18s ease-in-out infinite;
 }
 .aurora::before {
@@ -281,7 +283,7 @@ body {
   mask-composite: exclude;
   animation: spin-angle 8s linear infinite;
   pointer-events: none;
-  opacity: 0.8;
+  opacity: 0.3;
 }
 
 /* Cursor spotlight: --mx/--my are set by <PointerSpotlight/>. */
@@ -296,8 +298,8 @@ body {
   z-index: -1;
   border-radius: inherit;
   background: radial-gradient(
-    240px circle at var(--mx) var(--my),
-    color-mix(in oklab, var(--primary) 16%, transparent),
+    200px circle at var(--mx) var(--my),
+    color-mix(in oklab, var(--primary) 7%, transparent),
     transparent 70%
   );
   opacity: 0;
@@ -318,7 +320,7 @@ body {
   box-shadow:
     0 1px 1px rgb(16 24 40 / 0.04),
     0 4px 8px -2px rgb(16 24 40 / 0.06),
-    0 18px 40px -12px color-mix(in oklab, var(--primary) 28%, transparent);
+    0 18px 40px -12px color-mix(in oklab, var(--primary) 14%, transparent);
 }
 
 /* Container queries: cards adapt to their own width, not the viewport. */
@@ -331,7 +333,7 @@ body {
   }
 }
 
-/* :has() — highlight a row/card when anything inside has focus. */
+/* :has() â€” highlight a row/card when anything inside has focus. */
 .focus-card:has(:focus-visible) {
   border-color: var(--ring);
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 22%, transparent);
@@ -372,3 +374,9 @@ body {
     opacity: 1;
   }
 }
+
+
+input[type="search"]::-webkit-search-cancel-button {
+  appearance: none;
+}
+

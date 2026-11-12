@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
 
 import { EmptyState } from "@/components/shared/empty-state";
+import { SearchField } from "@/components/shared/search-field";
 import { filterSettings, SETTINGS_SECTIONS } from "@/features/settings/registry/settings-registry";
 
 /** Searchable settings: sticky section nav (desktop) + row-based section cards. */
@@ -13,17 +13,12 @@ export function SettingsView() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="relative max-w-md">
-        <Search aria-hidden className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <input
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search settings..."
-          aria-label="Search settings"
-          className="h-10 w-full rounded-lg border border-border bg-background pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-        />
-      </div>
+      <SearchField
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search settings..."
+        aria-label="Search settings"
+      />
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[200px_1fr]">
         <nav aria-label="Settings sections" className="hidden lg:block">
@@ -83,3 +78,4 @@ export function SettingsView() {
     </div>
   );
 }
+

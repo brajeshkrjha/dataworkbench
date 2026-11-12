@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { useFavoriteToolsStore } from "@/store/use-favorite-tools-store";
 import { useRecentToolsStore } from "@/store/use-recent-tools-store";
 import { useThemeStore, type Theme } from "@/store/use-theme-store";
+import { TIME_ZONE_OPTIONS, useTimeZoneStore } from "@/store/use-time-zone-store";
 
 const THEME_OPTIONS: Array<{ value: Theme; label: string; icon: typeof Sun }> = [
   { value: "light", label: "Light", icon: Sun },
@@ -83,4 +84,25 @@ export function AboutValue({ field }: { field: AboutField }) {
   else value = online ? status.version.api_version : "-";
 
   return <span className="text-sm font-medium tabular-nums">{value}</span>;
+}
+
+/** Time zone picker for the header clock. */
+export function TimeZoneControl() {
+  const timeZone = useTimeZoneStore((state) => state.timeZone);
+  const setTimeZone = useTimeZoneStore((state) => state.setTimeZone);
+
+  return (
+    <select
+      aria-label="Time zone"
+      value={timeZone}
+      onChange={(event) => setTimeZone(event.target.value)}
+      className="h-9 max-w-[14rem] rounded-lg border border-border bg-card px-2.5 text-sm outline-none focus:ring-2 focus:ring-ring/30"
+    >
+      {TIME_ZONE_OPTIONS.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+  );
 }

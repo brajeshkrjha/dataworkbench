@@ -12,6 +12,7 @@ export function ToolCard({ tool }: { tool: ToolMetadata }) {
 
   return (
     <CatalogCard
+      toolId={tool.id}
       icon={tool.icon}
       title={tool.name}
       description={tool.description}

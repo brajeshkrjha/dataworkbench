@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 
 import { StaggerGroup, StaggerItem } from "@/components/motion/motion-primitives";
 import { ToolIcon } from "@/components/shared/tool-icon";
+import { ToolLogo } from "@/components/shared/tool-logo";
 import { CATEGORY_LABELS } from "@/constants/tool-metadata";
 import { useTools } from "@/features/tools/hooks/use-tools";
 import { getToolModules } from "@/features/tools/lib/tool-modules";
@@ -42,9 +43,7 @@ export function WorkflowPanels() {
                 href={tool.route}
                 className="group flex items-start gap-3 border-b border-border/70 p-4 transition-colors hover:bg-accent/40"
               >
-                <span className="bg-gradient-brand flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-white shadow-sm">
-                  <ToolIcon name={tool.icon} className="h-5 w-5" />
-                </span>
+                <ToolLogo toolId={tool.id} icon={tool.icon} size="md" />
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold tracking-tight">{tool.name}</p>
                   <p className="text-xs text-muted-foreground">
@@ -117,4 +116,5 @@ export function WorkflowPanels() {
     </section>
   );
 }
+
 

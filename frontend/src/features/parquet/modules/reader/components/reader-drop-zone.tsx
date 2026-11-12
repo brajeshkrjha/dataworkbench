@@ -65,11 +65,12 @@ export function ReaderDropZone({
 
   return (
     <div
+      onClick={() => inputRef.current?.click()}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={() => setIsDragging(false)}
       className={cn(
-        "flex flex-col items-center justify-center rounded-lg border border-dashed p-6 text-center transition-colors sm:p-10",
+        "flex cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed p-6 text-center transition-colors sm:p-10",
         isDragging ? "border-primary bg-accent" : "border-border",
         disabled && "pointer-events-none opacity-60"
       )}
@@ -81,7 +82,10 @@ export function ReaderDropZone({
         variant="outline"
         size="sm"
         className="mt-4"
-        onClick={() => inputRef.current?.click()}
+        onClick={(e) => {
+          e.stopPropagation();
+          inputRef.current?.click();
+        }}
       >
         Select file
       </Button>
@@ -90,6 +94,7 @@ export function ReaderDropZone({
         type="file"
         data-testid="reader-file-input"
         className="hidden"
+        onClick={(e) => e.stopPropagation()}
         accept=".parquet"
         onChange={(event) => {
           accept(event.target.files?.[0]);
