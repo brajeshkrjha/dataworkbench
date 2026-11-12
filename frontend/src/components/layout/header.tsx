@@ -1,6 +1,8 @@
 import Link from "next/link";
 
+import { HeaderClock } from "@/components/layout/header-clock";
 import { MobileNav } from "@/components/layout/mobile-nav";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { siteConfig } from "@/config/site";
 
 export function Header() {
@@ -15,6 +17,10 @@ export function Header() {
           {siteConfig.tagline}
         </span>
       </Link>
+      <div className="ml-auto flex items-center gap-3">
+        <HeaderClock />
+        <ThemeToggle />
+      </div>
     </header>
   );
 }

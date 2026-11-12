@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Search } from "lucide-react";
 
 import { EmptyState } from "@/components/shared/empty-state";
+import { SearchField } from "@/components/shared/search-field";
 import { ToolGrid } from "@/features/tools/components/tool-grid";
 import { ToolGridSkeleton } from "@/features/tools/components/tool-grid-skeleton";
 import { useTools } from "@/features/tools/hooks/use-tools";
@@ -64,17 +64,12 @@ export function ToolCatalog() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="relative max-w-md">
-        <Search aria-hidden className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <input
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search tools..."
-          aria-label="Search tools"
-          className="h-10 w-full rounded-lg border border-border bg-background pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-        />
-      </div>
+      <SearchField
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search tools..."
+        aria-label="Search tools"
+      />
       <div className="flex flex-wrap gap-2">
         <button
           onClick={() => setActiveCategory("all")}
@@ -110,4 +105,5 @@ export function ToolCatalog() {
     </div>
   );
 }
+
 

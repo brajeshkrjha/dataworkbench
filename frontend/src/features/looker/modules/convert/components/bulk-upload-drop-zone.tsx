@@ -85,11 +85,12 @@ export function BulkUploadDropZone({
 
   return (
     <div
+      onClick={() => !isReadingZip && inputRef.current?.click()}
       onDrop={(event) => void handleDrop(event)}
       onDragOver={handleDragOver}
       onDragLeave={() => setIsDragging(false)}
       className={cn(
-        "flex flex-col items-center justify-center rounded-lg border border-dashed p-6 text-center transition-colors sm:p-10",
+        "flex cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed p-6 text-center transition-colors sm:p-10",
         isDragging ? "border-primary bg-accent" : "border-border",
         disabled && "pointer-events-none opacity-60"
       )}
@@ -100,11 +101,11 @@ export function BulkUploadDropZone({
         Every valid `.pbip` project inside is discovered automatically — no manual selection needed.
       </p>
       <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-        <Button variant="outline" size="sm" disabled={isReadingZip} onClick={() => inputRef.current?.click()}>
+        <Button variant="outline" size="sm" disabled={isReadingZip} onClick={(e) => { e.stopPropagation(); inputRef.current?.click(); }}>
           <FolderUp className="h-3.5 w-3.5" />
           Select parent folder
         </Button>
-        <Button variant="outline" size="sm" disabled={isReadingZip} onClick={() => zipInputRef.current?.click()}>
+        <Button variant="outline" size="sm" disabled={isReadingZip} onClick={(e) => { e.stopPropagation(); zipInputRef.current?.click(); }}>
           {isReadingZip ? "Reading ZIP..." : "Select ZIP"}
         </Button>
       </div>
@@ -114,6 +115,7 @@ export function BulkUploadDropZone({
         accept=".zip,application/zip"
         data-testid="bulk-zip-input"
         className="hidden"
+        onClick={(e) => e.stopPropagation()}
         onChange={(event) => {
           const file = event.target.files?.[0];
           if (file) void handleEntries([{ relativePath: file.name, file }]);
@@ -125,6 +127,7 @@ export function BulkUploadDropZone({
         type="file"
         data-testid="bulk-folder-input"
         className="hidden"
+        onClick={(e) => e.stopPropagation()}
         multiple
         {...directoryInputProps}
         onChange={(event) => {

@@ -12,6 +12,7 @@ import {
   ClearFavoritesControl,
   ClearRecentsControl,
   ThemeControl,
+  TimeZoneControl,
 } from "@/features/settings/components/setting-controls";
 
 export interface SettingItem {
@@ -44,6 +45,13 @@ export const SETTINGS_SECTIONS: SettingsSection[] = [
         description: "Switch between light and dark mode.",
         keywords: ["dark", "light", "mode", "color"],
         Control: ThemeControl,
+      },
+      {
+        id: "time-zone",
+        title: "Time zone",
+        description: "Time zone used by the clock in the header. Default is India (IST).",
+        keywords: ["clock", "date", "time", "country", "region", "ist", "utc"],
+        Control: TimeZoneControl,
       },
     ],
   },

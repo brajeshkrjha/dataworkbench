@@ -42,7 +42,7 @@ export function SearchBar() {
           onFocus={() => setIsFocused(true)}
           onBlur={() => setTimeout(() => setIsFocused(false), 150)}
           placeholder="Search tools, modules, and capabilities..."
-          className="h-full flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+          className="h-full min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground focus:outline-none focus-visible:outline-none"
         />
         {!isFocused && !query ? (
           <kbd className="hidden shrink-0 rounded border border-border bg-muted px-1.5 py-0.5 text-xs font-medium text-muted-foreground sm:inline-block">

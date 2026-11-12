@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ChevronRight, type LucideIcon } from "lucide-react";
 
-import { ToolIcon } from "@/components/shared/tool-icon";
+import { ToolLogo } from "@/components/shared/tool-logo";
 import { CATEGORY_LABELS } from "@/constants/tool-metadata";
 import type { ToolMetadata } from "@/types/tool";
 
@@ -38,9 +38,7 @@ export function ToolListCard({
                 href={tool.route}
                 className="group flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-accent/50"
               >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-secondary text-primary">
-                  <ToolIcon name={tool.icon} className="h-4 w-4" />
-                </span>
+                <ToolLogo toolId={tool.id} icon={tool.icon} size="sm" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">{tool.name}</p>
                   <p className="truncate text-xs text-muted-foreground">{CATEGORY_LABELS[tool.category]}</p>
@@ -58,3 +56,4 @@ export function ToolListCard({
     </section>
   );
 }
+
