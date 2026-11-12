@@ -87,6 +87,8 @@ export const SETTINGS_SECTIONS: SettingsSection[] = [
       { id: "backend", title: "Backend status", keywords: ["online", "api", "server"], Control: () => <AboutValue field="backend" /> },
       { id: "version", title: "Version", keywords: ["build", "release"], Control: () => <AboutValue field="version" /> },
       { id: "api-version", title: "API version", Control: () => <AboutValue field="api" /> },
+      { id: "tools", title: "Tools available", keywords: ["catalog", "count"], Control: () => <AboutValue field="tools" /> },
+      { id: "modules", title: "Modules available", keywords: ["features", "count"], Control: () => <AboutValue field="modules" /> },
     ],
   },
 ];
